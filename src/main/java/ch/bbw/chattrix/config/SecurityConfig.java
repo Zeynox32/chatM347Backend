@@ -1,6 +1,6 @@
-package org.example.templatebackend.config;
+package ch.bbw.chattrix.config;
 
-import org.example.templatebackend.security.SessionAuthenticationFilter;
+import ch.bbw.chattrix.security.SessionAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;

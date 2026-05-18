@@ -1,9 +1,9 @@
-package org.example.templatebackend.service;
+package ch.bbw.chattrix.service;
 
-import org.example.templatebackend.config.EmailAlreadyExistsException;
-import org.example.templatebackend.config.UsernameOrPasswordWrongException;
-import org.example.templatebackend.repository.User;
-import org.example.templatebackend.repository.UserRepository;
+import ch.bbw.chattrix.config.EmailAlreadyExistsException;
+import ch.bbw.chattrix.config.UsernameOrPasswordWrongException;
+import ch.bbw.chattrix.repository.User;
+import ch.bbw.chattrix.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 

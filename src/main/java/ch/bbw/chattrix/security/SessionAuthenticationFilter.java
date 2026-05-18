@@ -1,12 +1,12 @@
-package org.example.templatebackend.security;
+package ch.bbw.chattrix.security;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.example.templatebackend.repository.SessionToken;
-import org.example.templatebackend.service.SessionTokenService;
+import ch.bbw.chattrix.repository.SessionToken;
+import ch.bbw.chattrix.service.SessionTokenService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;

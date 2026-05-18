@@ -1,8 +1,8 @@
-package org.example.templatebackend.service;
+package ch.bbw.chattrix.service;
 
-import org.example.templatebackend.repository.SessionToken;
-import org.example.templatebackend.repository.SessionTokenRepository;
-import org.example.templatebackend.repository.User;
+import ch.bbw.chattrix.repository.SessionToken;
+import ch.bbw.chattrix.repository.SessionTokenRepository;
+import ch.bbw.chattrix.repository.User;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;

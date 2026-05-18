@@ -1,4 +1,4 @@
-package org.example.templatebackend.config;
+package ch.bbw.chattrix.config;
 
 public class UsernameOrPasswordWrongException extends RuntimeException {
     public UsernameOrPasswordWrongException() {

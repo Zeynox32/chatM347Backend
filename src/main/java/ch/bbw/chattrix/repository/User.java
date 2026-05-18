@@ -1,4 +1,4 @@
-package org.example.templatebackend.repository;
+package ch.bbw.chattrix.repository;
 
 import jakarta.persistence.*;
 
