@@ -2,8 +2,8 @@ spring:
   datasource:
     username: ${DB_USER}
     password: ${DB_PASSWORD}
+    url: jdbc:mariadb://db:3306/chattrix
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://localhost:3307/chattrix
 
   jpa:
     hibernate:

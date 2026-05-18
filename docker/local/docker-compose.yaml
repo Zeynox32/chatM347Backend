@@ -3,40 +3,40 @@ services:
     image: mariadb:jammy
     container_name: chattrix-db-local
     restart: always
+
     environment:
       MARIADB_ROOT_PASSWORD: ${DB_PASSWORD}
       MARIADB_DATABASE: ${DB_NAME}
       MARIADB_USER: ${DB_USER}
       MARIADB_PASSWORD: ${DB_PASSWORD}
+
     ports:
       - "3307:3306"
+
     volumes:
-      - ../mysql-data:/var/lib/mysql
+      - chattrix-mysql-local-data:/var/lib/mysql
+
+    healthcheck:
+      test: ["CMD", "mariadb-admin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     container_name: chattrix-phpmyadmin-local
     restart: always
+
     environment:
-      PMA_HOST: db
+      PMA_HOST: localhost
       PMA_USER: ${DB_USER}
       PMA_PASSWORD: ${DB_PASSWORD}
+
     ports:
       - "8090:80"
+
     depends_on:
       - db
-  chattrix-backend:
-    build:
-      context: ../..
-      dockerfile: docker/local/Dockerfile
-    container_name: chattrix-backend-local
-    volumes:
-      - ../..:/app
-    ports:
-      - "8080:8080"
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:mariadb://db:3306/${DB_NAME}
-      SPRING_DATASOURCE_USERNAME: ${DB_USER}
-      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
-      SPRING_JPA_HIBERNATE_DDL_AUTO: update
-    depends_on:
-      - db
+
+volumes:
+  chattrix-mysql-local-data:
