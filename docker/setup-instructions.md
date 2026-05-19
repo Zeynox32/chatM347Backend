@@ -6,7 +6,7 @@ This project provides two Docker environments:
 - Production
 
 ---
-# Important Note: You need the .env files, so that the containers will run.
+# Important Note: You need the .env files, that the containers will run.
 
 # Start Local
 
@@ -35,8 +35,7 @@ docker compose down
 # Start Production
 
 ## 1. Build the application
-
-./mvnw clean package -DskipTests
+./mvnw clean package -DskipTests in the root directory
 
 ## 2. Navigate to production folder
 
