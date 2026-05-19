@@ -1,4 +1,4 @@
-package ch.bbw.chattrix.repository;
+package ch.bbw.chattrix.entity;
 
 import jakarta.persistence.*;
 

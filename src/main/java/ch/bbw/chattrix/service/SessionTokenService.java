@@ -1,8 +1,8 @@
 package ch.bbw.chattrix.service;
 
-import ch.bbw.chattrix.repository.SessionToken;
+import ch.bbw.chattrix.entity.SessionToken;
 import ch.bbw.chattrix.repository.SessionTokenRepository;
-import ch.bbw.chattrix.repository.User;
+import ch.bbw.chattrix.entity.User;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
