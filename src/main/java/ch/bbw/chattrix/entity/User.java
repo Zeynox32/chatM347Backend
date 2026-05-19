@@ -30,6 +30,10 @@ public class User {
     }
 
 
+    //For tests
+    public void setId(Integer id) {
+        this.id = id;
+    }
     public Integer getId() {
         return id;
     }

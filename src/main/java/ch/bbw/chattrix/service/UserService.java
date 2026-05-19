@@ -1,7 +1,7 @@
 package ch.bbw.chattrix.service;
 
-import ch.bbw.chattrix.config.EmailAlreadyExistsException;
-import ch.bbw.chattrix.config.UsernameOrPasswordWrongException;
+import ch.bbw.chattrix.exception.EmailAlreadyExistsException;
+import ch.bbw.chattrix.exception.UsernameOrPasswordWrongException;
 import ch.bbw.chattrix.entity.User;
 import ch.bbw.chattrix.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
