@@ -12,7 +12,7 @@ import java.util.List;
 @Setter
 public class Chat {
     @Id
-    private int id;
+    private String chatId;
     private Meta meta;
     private List<Member> members;
     private List<Message> messages;
