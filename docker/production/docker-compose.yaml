@@ -1,7 +1,7 @@
 services:
   db:
     image: mariadb:jammy
-    container_name: chattrix-db-production
+    container_name: chattrix-db
     restart: always
 
     environment:
@@ -29,7 +29,7 @@ services:
 
     image: chattrix-backend:latest
 
-    container_name: chattrix-backend-production
+    container_name: chattrix-backend
     ports:
       - "8080:8080"
 

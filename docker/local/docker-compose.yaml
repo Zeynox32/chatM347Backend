@@ -1,7 +1,7 @@
 services:
   db:
     image: mariadb:jammy
-    container_name: chattrix-db-local
+    container_name: chattrix-db
     restart: always
 
     environment:
@@ -24,11 +24,11 @@ services:
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
-    container_name: chattrix-phpmyadmin-local
+    container_name: chattrix-phpmyadmin
     restart: always
 
     environment:
-      PMA_HOST: localhost
+      PMA_HOST: db
       PMA_USER: ${DB_USER}
       PMA_PASSWORD: ${DB_PASSWORD}
 

@@ -6,7 +6,7 @@ import ch.bbw.chattrix.dto.LoginUserResponse;
 import ch.bbw.chattrix.dto.RegisterUserRequest;
 import ch.bbw.chattrix.dto.RegisterUserResponse;
 import ch.bbw.chattrix.dto.LoginUserRequest;
-import ch.bbw.chattrix.repository.User;
+import ch.bbw.chattrix.entity.User;
 import ch.bbw.chattrix.security.AuthenticatedUser;
 import ch.bbw.chattrix.security.SessionAuthenticationFilter;
 import ch.bbw.chattrix.service.SessionTokenService;
