@@ -1,7 +1,7 @@
 package ch.bbw.chattrix.controller;
 
-import ch.bbw.chattrix.config.EmailAlreadyExistsException;
-import ch.bbw.chattrix.config.UsernameOrPasswordWrongException;
+import ch.bbw.chattrix.exception.EmailAlreadyExistsException;
+import ch.bbw.chattrix.exception.UsernameOrPasswordWrongException;
 import ch.bbw.chattrix.dto.LoginUserResponse;
 import ch.bbw.chattrix.dto.RegisterUserRequest;
 import ch.bbw.chattrix.dto.RegisterUserResponse;

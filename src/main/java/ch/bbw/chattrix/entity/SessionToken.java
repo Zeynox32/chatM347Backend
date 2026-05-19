@@ -39,6 +39,11 @@ public class SessionToken {
         return token;
     }
 
+    //For tests
+    public void setToken(String token) {
+        this.token = token;
+    }
+
     public User getUser() {
         return user;
     }

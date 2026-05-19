@@ -1,4 +1,4 @@
-package ch.bbw.chattrix.config;
+package ch.bbw.chattrix.exception;
 
 public class EmailAlreadyExistsException extends RuntimeException {
     public EmailAlreadyExistsException() {
