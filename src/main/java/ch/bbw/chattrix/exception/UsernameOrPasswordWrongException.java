@@ -1,4 +1,4 @@
-package ch.bbw.chattrix.config;
+package ch.bbw.chattrix.exception;
 
 public class UsernameOrPasswordWrongException extends RuntimeException {
     public UsernameOrPasswordWrongException() {
