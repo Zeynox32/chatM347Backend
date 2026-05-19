@@ -21,7 +21,7 @@ docker compose --env-file .env up --build -d
 ## 3. Access application
 
 - Backend: http://localhost:8080
-- Database: localhost:3307
+- Database: http://localhost:3307
 - PHPMyAdmin: http://localhost:8090
 
 ---
