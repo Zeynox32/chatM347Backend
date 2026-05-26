@@ -20,7 +20,6 @@ Start the backend local in your IDE
 - Backend: http://localhost:8080
 - PHPMyAdmin: http://localhost:8090
 
-
 ---
 
 ## Stop containers
