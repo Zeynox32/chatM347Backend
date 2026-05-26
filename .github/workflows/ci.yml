@@ -40,7 +40,7 @@ jobs:
       - name: Upload JAR
         uses: actions/upload-artifact@v4
         with:
-          name: backend-jar
+          name: chattrix-backend-jar
           path: target/*.jar
 
       - name: Dependency Tree
@@ -51,3 +51,6 @@ jobs:
         with:
           name: coverage-report
           path: target/site/jacoco/
+
+      - name: Build Docker Image
+        run: docker build -t backend:test .
