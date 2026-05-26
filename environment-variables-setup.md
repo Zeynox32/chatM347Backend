@@ -11,3 +11,5 @@
 - DB_PASSWORD
 - DB_URL
 - DB_USER
+## For the last step, when you want to run the test, edit the test runtime-configuration and add:
+- FRONTEND_URL
