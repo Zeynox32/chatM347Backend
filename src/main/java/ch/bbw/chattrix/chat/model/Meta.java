@@ -1,4 +1,4 @@
-package org.example.templatebackend.chat.model;
+package ch.bbw.chattrix.chat.model;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -10,4 +10,4 @@ spring:
       ddl-auto: update
 
   mongodb:
-    uri: mongodb://root:1234@localhost/WeatherMeassuresVorlage?authSource=admin
+    uri: mongodb://${MONGO_DB_USER}:${MONGO_DB_PASSWORD}@localhost/ChatData?authSource=admin

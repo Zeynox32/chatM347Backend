@@ -8,3 +8,6 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+
+  mongodb:
+    uri: mongodb://${MONGO_DB_USER}:${MONGO_DB_PASSWORD}@localhost/ChatData?authSource=admin

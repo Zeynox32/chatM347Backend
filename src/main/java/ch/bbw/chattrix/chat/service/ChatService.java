@@ -1,13 +1,12 @@
-package org.example.templatebackend.chat.service;
+package ch.bbw.chattrix.chat.service;
 
-import org.example.templatebackend.chat.dto.AddChatDTO;
-import org.example.templatebackend.chat.dto.ChatSummaryDto;
-import org.example.templatebackend.chat.dto.SendMessageDTO;
-import org.example.templatebackend.chat.model.Chat;
-import org.example.templatebackend.chat.model.Member;
-import org.example.templatebackend.chat.model.Message;
-import org.example.templatebackend.chat.model.Meta;
-import org.example.templatebackend.chat.repository.ChatRepository;
+import ch.bbw.chattrix.chat.dto.AddChatDTO;
+import ch.bbw.chattrix.chat.dto.ChatSummaryDto;
+import ch.bbw.chattrix.chat.dto.SendMessageDTO;
+import ch.bbw.chattrix.chat.model.Chat;
+import ch.bbw.chattrix.chat.model.Message;
+import ch.bbw.chattrix.chat.model.Meta;
+import ch.bbw.chattrix.chat.repository.ChatRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;

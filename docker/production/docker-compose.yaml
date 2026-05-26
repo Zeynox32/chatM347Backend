@@ -22,6 +22,16 @@ services:
       timeout: 5s
       retries: 10
 
+  mongodb:
+    image: mongo
+    container_name: chattrix-mongo-db
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_DB_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_DB_PASSWORD}
+
   chattrix-backend:
     build:
       context: ../..

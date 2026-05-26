@@ -1,9 +1,9 @@
-package org.example.templatebackend.chat.controller;
+package ch.bbw.chattrix.chat.controller;
 
-import org.example.templatebackend.chat.dto.AddChatDTO;
-import org.example.templatebackend.chat.dto.SendMessageDTO;
-import org.example.templatebackend.chat.service.ChatService;
-import org.example.templatebackend.security.AuthenticatedUser;
+import ch.bbw.chattrix.chat.dto.AddChatDTO;
+import ch.bbw.chattrix.chat.dto.SendMessageDTO;
+import ch.bbw.chattrix.chat.service.ChatService;
+import ch.bbw.chattrix.security.AuthenticatedUser;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
