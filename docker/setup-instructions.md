@@ -1,7 +1,6 @@
 # Docker Setup for local testing
 
 ---
-# Important Note: You need the .env file, that the container will run.
 
 ## 1. Navigate to local folder
 
