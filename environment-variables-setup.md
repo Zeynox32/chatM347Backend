@@ -3,6 +3,7 @@
 - DB_PASSWORD
 - DB_NAME
 - DB_URL
+- FRONTEND_URL
 ## Also, you'll need to set the profile to "local" in the runtime-configuration
 ## For local testing navigate to the folder docker/ and add a .env-file with the following values:
 - COMPOSE_PROJECT_NAME
