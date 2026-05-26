@@ -42,4 +42,4 @@ jobs:
           path: target/site/jacoco/
 
       - name: Build Docker Image
-        run: docker build -t backend:test -f production/Dockerfile .
+        run: docker build -t chattrix-backend:test-ci -f production/Dockerfile .
