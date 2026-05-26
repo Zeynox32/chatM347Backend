@@ -1,56 +1,26 @@
-# Chattrix Docker Setup
-
-This project provides two Docker environments:
-
-- Local
-- Production
+# Docker Setup for local testing
 
 ---
-# Important Note: You need the .env files, that the containers will run.
-
-# Start Local
 
 ## 1. Navigate to local folder
 
-cd docker/local
+cd docker
 
-## 2. Start the environment
+## 2. Start/Create containers
 
-docker compose --env-file .env up --build -d
+docker compose --env-file .env up -d
 
-## 3. Access application
+## 3. Start chattrix-backend
 
-- Backend: http://localhost:8080
-- Database: http://localhost:3307
-- PHPMyAdmin: http://localhost:8090
-
----
-
-## Stop local environment
-
-docker compose down
-
----
-
-# Start Production
-
-## 1. Build the application
-./mvnw clean package -DskipTests in the root directory
-
-## 2. Navigate to production folder
-
-cd docker/production
-
-## 3. Start production environment
-
-docker compose --env-file .env up --build -d
+Start the backend local in your IDE
 
 ## 4. Access application
 
 - Backend: http://localhost:8080
+- PHPMyAdmin: http://localhost:8090
 
 ---
 
-## Stop production environment
+## Stop containers
 
 docker compose down
