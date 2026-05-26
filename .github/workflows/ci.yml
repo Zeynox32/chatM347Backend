@@ -10,11 +10,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Repository herunterladen
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # Java installieren
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
@@ -22,7 +20,6 @@ jobs:
           java-version: 21
           cache: maven
 
-      # Maven Dependencies cachen
       - name: Cache Maven packages
         uses: actions/cache@v4
         with:
@@ -31,29 +28,24 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-m2
 
-      # Projekt builden + Tests ausführen
       - name: Build and Run Tests
         run: mvn clean verify jacoco:report
 
-      # Test Reports speichern
       - name: Upload Test Reports
         uses: actions/upload-artifact@v4
         with:
           name: test-reports
           path: target/surefire-reports/
 
-      # JAR speichern
       - name: Upload JAR
         uses: actions/upload-artifact@v4
         with:
           name: backend-jar
           path: target/*.jar
 
-      # Dependency Check
       - name: Dependency Tree
         run: mvn dependency:tree
 
-      # Test Coverage Report
       - name: Upload Coverage Report
         uses: actions/upload-artifact@v4
         with:
