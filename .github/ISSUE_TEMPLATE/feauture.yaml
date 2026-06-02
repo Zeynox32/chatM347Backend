@@ -1,0 +1,53 @@
+name: Feature Request
+description: Request a new feature or functionality.
+title: "[FEATURE] "
+labels: ["Feature"]
+
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Feature Description
+      description: Please describe the feature and what it should do.
+      placeholder: |
+        Example:
+        Users should be able to export their data as a CSV file.
+    validations:
+      required: true
+
+  - type: textarea
+    id: userstory
+    attributes:
+      label: User Story
+      description: Describe the feature from a user perspective.
+      value: |
+        As a <user type>,
+        I want <feature>,
+        so that <benefit>.
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptancecriteria
+    attributes:
+      label: Acceptance Criteria
+      description: What must be true for this feature to be considered complete?
+      value: |
+        - [ ] The feature works as described
+        - [ ] Edge cases are handled
+        - [ ] Feature is tested
+    validations:
+      required: true
+
+  - type: textarea
+    id: dod
+    attributes:
+      label: Definition of Done (DoD)
+      description: Conditions that must be met before this ticket can be closed.
+      value: |
+        - [ ] Feature is implemented and deployed
+        - [ ] Code has been reviewed and approved
+        - [ ] Tests are implemented and passing
+        - [ ] Documentation is updated (if applicable)
+    validations:
+      required: true
