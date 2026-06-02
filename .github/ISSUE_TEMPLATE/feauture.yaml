@@ -1,7 +1,7 @@
 name: Feature Request
 description: Request a new feature or functionality.
-title: "[FEATURE] "
-labels: ["Feature"]
+title: "FEATURE"
+labels: ["feature"]
 
 body:
   - type: textarea
@@ -10,8 +10,7 @@ body:
       label: Feature Description
       description: Please describe the feature and what it should do.
       placeholder: |
-        Example:
-        Users should be able to export their data as a CSV file.
+        Example: Users should be able to export their data as a CSV file.
     validations:
       required: true
 
@@ -24,18 +23,6 @@ body:
         As a <user type>,
         I want <feature>,
         so that <benefit>.
-    validations:
-      required: true
-
-  - type: textarea
-    id: acceptancecriteria
-    attributes:
-      label: Acceptance Criteria
-      description: What must be true for this feature to be considered complete?
-      value: |
-        - [ ] The feature works as described
-        - [ ] Edge cases are handled
-        - [ ] Feature is tested
     validations:
       required: true
 

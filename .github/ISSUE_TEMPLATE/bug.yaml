@@ -1,7 +1,7 @@
 name: Bug Report
 description: Report a bug that currently exists in our application.
-title: "[BUG] "
-labels: ["Bug"]
+title: "BUG"
+labels: ["bug"]
 
 body:
   - type: textarea
@@ -10,8 +10,7 @@ body:
       label: Bug Description
       description: Please describe the bug as precisely as possible. What happened?
       placeholder: |
-        Example:
-        When clicking the "Save" button, the application crashes.
+        Example: When clicking the "Save" button, the application crashes.
     validations:
       required: true
 

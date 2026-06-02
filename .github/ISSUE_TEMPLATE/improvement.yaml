@@ -1,6 +1,6 @@
 name: Improvement
 description: Suggest an improvement for an existing feature or functionality.
-title: "[IMPROVEMENT] "
+title: "IMPROVEMENT"
 labels: ["enhancement"]
 
 body:
