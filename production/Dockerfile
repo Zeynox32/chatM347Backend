@@ -1,9 +1,9 @@
-FROM eclipse-temurin:21-jdk
+FROM eclipse-temurin:21-jre
 
-WORKDIR /chattrix-backend
+WORKDIR /app
 
-COPY target/chattrix-backend.jar chattrix-backend.jar
+COPY target/chattrix-backend.jar app.jar
 
 EXPOSE 8080
 
-ENTRYPOINT ["java", "-jar", "chattrix-backend.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]

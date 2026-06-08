@@ -22,7 +22,10 @@ public class SessionTokenService {
     @Transactional
     public SessionToken createForUser(User user) {
         sessionTokenRepository.deleteByUser(user);
-        SessionToken sessionToken = new SessionToken(UUID.randomUUID().toString(), user, Instant.now());
+
+        SessionToken sessionToken =
+                new SessionToken(UUID.randomUUID().toString(), user, Instant.now());
+
         return sessionTokenRepository.save(sessionToken);
     }
 
@@ -30,6 +33,7 @@ public class SessionTokenService {
         return sessionTokenRepository.findByToken(token);
     }
 
+    @Transactional
     public void deleteByToken(String token) {
         sessionTokenRepository.deleteByToken(token);
     }

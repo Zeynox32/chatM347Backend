@@ -1,0 +1,18 @@
+name: Require Issue Reference
+
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate PR contains Issue reference
+        run: |
+          CONTENT="${{ github.event.pull_request.title }} ${{ github.event.pull_request.body }}"
+
+          if ! echo "$CONTENT" | grep -E "(Closes|Fixes) #[0-9]+"; then
+            echo "❌ PR must reference an Issue (e.g. Closes #123)"
+            exit 1
+          fi

@@ -1,0 +1,42 @@
+name: Improvement
+description: Suggest an improvement for an existing feature or functionality.
+title: "IMPROVEMENT"
+labels: ["enhancement"]
+
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Please describe what should be improved and why.
+      placeholder: |
+        Example:
+        The current search is slow and does not support filters.
+    validations:
+      required: true
+
+  - type: textarea
+    id: userstory
+    attributes:
+      label: User Story
+      description: Describe the improvement from a user perspective.
+      value: |
+        As a <user type>,
+        I want <improvement>,
+        so that <benefit>.
+    validations:
+      required: true
+
+  - type: textarea
+    id: dod
+    attributes:
+      label: Definition of Done (DoD)
+      description: Conditions that must be met before this ticket can be closed.
+      value: |
+        - [ ] Improvement is implemented and deployed to the target environment
+        - [ ] Existing functionality still works without regressions
+        - [ ] Improvement is validated against the described need
+        - [ ] Code has been reviewed and approved
+        - [ ] Tests are added or updated where applicable
+    validations:
+      required: true

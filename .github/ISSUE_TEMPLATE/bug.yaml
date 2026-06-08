@@ -1,0 +1,29 @@
+name: Bug Report
+description: Report a bug that currently exists in our application.
+title: "BUG"
+labels: ["bug"]
+
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: Please describe the bug as precisely as possible. What happened?
+      placeholder: |
+        Example: When clicking the "Save" button, the application crashes.
+    validations:
+      required: true
+
+  - type: textarea
+    id: dod
+    attributes:
+      label: Definition of Done (DoD)
+      description: Conditions that must be met before this ticket can be closed.
+      value: |
+        - [ ] The bug is fixed in the target environment
+        - [ ] The issue can no longer be reproduced
+        - [ ] No regression of related functionality
+        - [ ] Fix has been reviewed and approved
+        - [ ] Tests (if applicable) are added or updated
+    validations:
+      required: true
