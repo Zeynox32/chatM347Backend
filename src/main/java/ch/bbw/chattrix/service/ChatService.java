@@ -42,9 +42,7 @@ public class ChatService {
     }
 
     public Chat addChat(ChatGroupRequest newChat, int userId ) {
-        System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++");
         if (newChat.members() == null || newChat.members().stream().noneMatch(member -> member.getMembers_id() == userId)) {
-            System.out.println("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh");
             System.out.println(userId);
             throw new RuntimeException("User " + userId + " is not a member of the new chat.");
         }

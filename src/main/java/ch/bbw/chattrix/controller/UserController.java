@@ -70,8 +70,6 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody LoginUserRequest request) {
-        System.out.println("******************************************************");
-        System.out.println(request.toString());
         try {
             User user = userService.loginUser(
                     request.eMail(),
@@ -81,8 +79,6 @@ public class UserController {
             String sessionToken = sessionTokenService
                     .createForUser(user)
                     .getToken();
-
-            System.out.println(user.geteMail());
 
             return ResponseEntity.ok()
                     .header(HttpHeaders.SET_COOKIE, createSessionCookie(sessionToken).toString())

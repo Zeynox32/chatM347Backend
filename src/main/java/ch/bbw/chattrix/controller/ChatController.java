@@ -32,7 +32,6 @@ public class ChatController {
 
     @GetMapping("/all-metadata")
     public ResponseEntity<?> getAllChatMetadata(@AuthenticationPrincipal AuthenticatedUser authenticatedUser) {
-        System.out.println("VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV");
         try {
             return ResponseEntity.ok().body(chatService.getAllMetadata(authenticatedUser.id()));
         }catch (RuntimeException e){
@@ -43,12 +42,7 @@ public class ChatController {
     @PostMapping
     public ResponseEntity<?> addChat(@AuthenticationPrincipal AuthenticatedUser authenticatedUser, @RequestBody ChatGroupRequest newChat) {
         try {
-            System.out.println("ooooooooooooooooooooooooooooooooooooooooooooooooooooo");
-
             ResponseEntity<?> xy = ResponseEntity.ok().body(chatService.addChat(newChat, authenticatedUser.id()));
-
-            System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-
             return xy;
 
         }catch (RuntimeException e){
