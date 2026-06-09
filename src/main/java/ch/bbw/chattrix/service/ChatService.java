@@ -2,7 +2,7 @@ package ch.bbw.chattrix.service;
 
 import ch.bbw.chattrix.dto.chat.ChatGroupRequest;
 import ch.bbw.chattrix.dto.chat.ChatGroupResponse;
-import ch.bbw.chattrix.dto.chat.ChatRequest;
+import ch.bbw.chattrix.dto.chat.MessageRequest;
 import ch.bbw.chattrix.entity.mongodb.Chat;
 import ch.bbw.chattrix.entity.Message;
 import ch.bbw.chattrix.entity.Meta;
@@ -61,7 +61,7 @@ public class ChatService {
         return chatRepository.save(chat);
     }
 
-    public Chat sendMessage(ChatRequest messageDto, int userId) {
+    public Chat sendMessage(MessageRequest messageDto, int userId) {
 
         Chat chat = chatRepository.findById(messageDto.chatId())
                 .orElseThrow(() -> new RuntimeException("Chat nicht gefunden mit ID: " + messageDto.chatId()));

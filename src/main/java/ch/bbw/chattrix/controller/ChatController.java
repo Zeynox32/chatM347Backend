@@ -1,7 +1,7 @@
 package ch.bbw.chattrix.controller;
 
 import ch.bbw.chattrix.dto.chat.ChatGroupRequest;
-import ch.bbw.chattrix.dto.chat.ChatRequest;
+import ch.bbw.chattrix.dto.chat.MessageRequest;
 import ch.bbw.chattrix.service.ChatService;
 import ch.bbw.chattrix.security.AuthenticatedUser;
 import org.springframework.http.ResponseEntity;
@@ -50,7 +50,7 @@ public class ChatController {
     }
 
     @PostMapping("/sendMessage")
-    public ResponseEntity<?> sendMessage(@AuthenticationPrincipal AuthenticatedUser authenticatedUser, @RequestBody ChatRequest message) {
+    public ResponseEntity<?> sendMessage(@AuthenticationPrincipal AuthenticatedUser authenticatedUser, @RequestBody MessageRequest message) {
         try {
             return ResponseEntity.ok().body(chatService.sendMessage(message, authenticatedUser.id()));
         } catch (RuntimeException e) {
