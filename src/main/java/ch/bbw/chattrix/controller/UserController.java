@@ -13,7 +13,6 @@ import ch.bbw.chattrix.service.SessionTokenService;
 import ch.bbw.chattrix.service.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
@@ -31,16 +30,13 @@ public class UserController {
 
     private final UserService userService;
     private final SessionTokenService sessionTokenService;
-    private final String frontendUrl;
 
     public UserController(
             UserService userService,
-            SessionTokenService sessionTokenService,
-            @Value("${FRONTEND_URL}") String frontendUrl
+            SessionTokenService sessionTokenService
     ) {
         this.userService = userService;
         this.sessionTokenService = sessionTokenService;
-        this.frontendUrl = frontendUrl;
     }
 
     @PostMapping

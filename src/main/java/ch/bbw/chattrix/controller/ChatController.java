@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
-@CrossOrigin(origins = "${FRONTEND_URL}", allowCredentials = "true")
 @RestController
 @RequestMapping("/chat")
 public class ChatController {
@@ -25,7 +24,7 @@ public class ChatController {
     public ResponseEntity<?> getChat(@AuthenticationPrincipal AuthenticatedUser authenticatedUser, @RequestParam("chat-id") String chatId) {
         try {
             return ResponseEntity.ok().body(chatService.getChat(chatId, authenticatedUser.id()));
-        }catch (RuntimeException e){
+        } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
     }
@@ -34,7 +33,7 @@ public class ChatController {
     public ResponseEntity<?> getAllChatMetadata(@AuthenticationPrincipal AuthenticatedUser authenticatedUser) {
         try {
             return ResponseEntity.ok().body(chatService.getAllMetadata(authenticatedUser.id()));
-        }catch (RuntimeException e){
+        } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
     }
@@ -45,7 +44,7 @@ public class ChatController {
             ResponseEntity<?> xy = ResponseEntity.ok().body(chatService.addChat(newChat, authenticatedUser.id()));
             return xy;
 
-        }catch (RuntimeException e){
+        } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
     }
@@ -54,7 +53,7 @@ public class ChatController {
     public ResponseEntity<?> sendMessage(@AuthenticationPrincipal AuthenticatedUser authenticatedUser, @RequestBody ChatRequest message) {
         try {
             return ResponseEntity.ok().body(chatService.sendMessage(message, authenticatedUser.id()));
-        }catch (RuntimeException e){
+        } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
     }
