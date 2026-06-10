@@ -1,6 +1,7 @@
 package ch.bbw.chattrix.repository;
 
-import ch.bbw.chattrix.entity.mongodb.Chat;
+import ch.bbw.chattrix.entity.mongodb.ChatGroup;
+import org.springframework.data.domain.Limit;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -8,7 +9,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ChatRepository extends MongoRepository<Chat, String> {
-    @Query(value = "{'members.members_id' : ?0}")
-    List<Chat> findAllByUserId(Integer membersId);
+public interface ChatGroupRepository extends MongoRepository<ChatGroup, String> {
+    List<ChatGroup> findByMembersMemberId(Integer memberId);
 }

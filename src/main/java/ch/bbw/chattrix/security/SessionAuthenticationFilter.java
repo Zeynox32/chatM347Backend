@@ -36,7 +36,7 @@ public class SessionAuthenticationFilter extends OncePerRequestFilter {
                 .flatMap(sessionTokenService::findByToken)
                 .map(SessionToken::getUser)
                 .ifPresent(user -> {
-                    AuthenticatedUser principal = new AuthenticatedUser(user.getId(), user.getUsername(), user.geteMail());
+                    AuthenticatedUser principal = new AuthenticatedUser(user.getId(), user.getDisplayName(), user.getEMail());
                     UsernamePasswordAuthenticationToken authentication =
                             new UsernamePasswordAuthenticationToken(principal, null, AuthorityUtils.NO_AUTHORITIES);
                     SecurityContextHolder.getContext().setAuthentication(authentication);

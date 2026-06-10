@@ -6,6 +6,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Member {
-    private int members_id;
+    private int memberId;
     public String name;
 }

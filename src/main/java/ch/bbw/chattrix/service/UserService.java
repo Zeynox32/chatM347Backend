@@ -19,7 +19,7 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public User addUser(String name, String eMail, String password) {
+    public User registerUser(String name, String eMail, String password) {
         if (password == null || password.isBlank()) {
             throw new IllegalArgumentException("Password cannot be empty");
         } else if (name == null || name.isBlank()) {
@@ -59,19 +59,35 @@ public class UserService {
         }
 
         User existingUser = oldUser.get();
-        Optional<User> userWithSameEmail = userRepository.findByeMail(updatedUserData.geteMail());
-        if (userWithSameEmail.isPresent() && !userWithSameEmail.get().getId().equals(existingUser.getId())) {
-            throw new EmailAlreadyExistsException();
+
+        if (updatedUserData.getEMail() != null && !updatedUserData.getEMail().isBlank()) {
+
+            Optional<User> userWithSameEmail = userRepository.findByeMail(updatedUserData.getEMail());
+            if (userWithSameEmail.isPresent()
+                    && !userWithSameEmail.get().getId().equals(existingUser.getId())) {
+                throw new EmailAlreadyExistsException();
+            }
+
+            existingUser.setEMail(updatedUserData.getEMail());
         }
 
-        existingUser.setUsername(updatedUserData.getUsername());
-        existingUser.seteMail(updatedUserData.geteMail());
+        if (updatedUserData.getDisplayName() != null && !updatedUserData.getDisplayName().isBlank()) {
+            existingUser.setDisplayName(updatedUserData.getDisplayName());
+        }
 
         if (updatedUserData.getPassword() != null && !updatedUserData.getPassword().isBlank()) {
             existingUser.setPassword(passwordEncoder.encode(updatedUserData.getPassword()));
         }
 
         return userRepository.save(existingUser);
+    }
+
+    public void deleteUser(Integer authenticatedUserId) {
+
+        User existingUser = userRepository.findById(authenticatedUserId)
+                .orElseThrow(() -> new RuntimeException("User not found: " + authenticatedUserId));
+
+        userRepository.delete(existingUser);
     }
 
     public User getUser(Integer authenticatedUserId) {

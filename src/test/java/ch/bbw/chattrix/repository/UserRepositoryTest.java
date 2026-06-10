@@ -29,6 +29,6 @@ class UserRepositoryTest {
         Optional<User> result =
                 userRepository.findByeMail("hans@example.com");
         assertTrue(result.isPresent());
-        assertEquals("Hans", result.get().getUsername());
+        assertEquals("Hans", result.get().getDisplayName());
     }
 }

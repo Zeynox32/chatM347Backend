@@ -1,4 +1,4 @@
-package ch.bbw.chattrix.dto.chat;
+package ch.bbw.chattrix.dto.chatgroup;
 
 import ch.bbw.chattrix.entity.Member;
 

@@ -4,6 +4,7 @@ import ch.bbw.chattrix.dto.authorization.LoginUserRequest;
 import ch.bbw.chattrix.dto.authorization.LoginUserResponse;
 import ch.bbw.chattrix.dto.authorization.RegisterUserRequest;
 import ch.bbw.chattrix.dto.authorization.RegisterUserResponse;
+import ch.bbw.chattrix.dto.user.UserResponse;
 import ch.bbw.chattrix.entity.mariadb.User;
 import ch.bbw.chattrix.exception.EmailAlreadyExistsException;
 import ch.bbw.chattrix.exception.UsernameOrPasswordWrongException;
@@ -39,10 +40,10 @@ public class UserController {
         this.sessionTokenService = sessionTokenService;
     }
 
-    @PostMapping
+    @PostMapping("/register")
     public ResponseEntity<?> createUser(@RequestBody RegisterUserRequest request) {
         try {
-            User user = userService.addUser(
+            User user = userService.registerUser(
                     request.displayName(),
                     request.eMail(),
                     request.password()
@@ -78,7 +79,7 @@ public class UserController {
 
             return ResponseEntity.ok()
                     .header(HttpHeaders.SET_COOKIE, createSessionCookie(sessionToken).toString())
-                    .body(new LoginUserResponse(user.getId(), user.getUsername()));
+                    .body(new LoginUserResponse(user.getId(), user.getDisplayName()));
 
         } catch (UsernameOrPasswordWrongException e) {
             return ResponseEntity
@@ -111,13 +112,32 @@ public class UserController {
         }
     }
 
+    @DeleteMapping
+    public ResponseEntity<?> deleteUser(
+            @AuthenticationPrincipal AuthenticatedUser authenticatedUser
+    ) {
+        try {
+            userService.deleteUser(authenticatedUser.id());
+
+            return ResponseEntity.noContent().build();
+
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("error", e.getMessage()));
+        }
+    }
+
     @GetMapping
     public ResponseEntity<?> getUser(
             @AuthenticationPrincipal AuthenticatedUser authenticatedUser
     ) {
         try {
             User user = userService.getUser(authenticatedUser.id());
-            return ResponseEntity.ok(user);
+            UserResponse response = new  UserResponse();
+            response.setDisplayName(user.getDisplayName());
+            response.setId(user.getId());
+            response.setEMail(user.getEMail());
+            return ResponseEntity.ok(response);
 
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest()

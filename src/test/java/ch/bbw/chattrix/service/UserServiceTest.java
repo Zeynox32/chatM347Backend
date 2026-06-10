@@ -40,13 +40,13 @@ class UserServiceTest {
         when(userRepository.save(any(User.class)))
                 .thenAnswer(i -> i.getArgument(0));
 
-        User result = userService.addUser(
+        User result = userService.registerUser(
                 "Hans",
                 "hans@example.com",
                 "1234"
         );
 
-        assertEquals("Hans", result.getUsername());
+        assertEquals("Hans", result.getDisplayName());
         assertEquals("hans@example.com", result.geteMail());
     }
 
@@ -57,28 +57,28 @@ class UserServiceTest {
                 .thenReturn(Optional.of(new User()));
 
         assertThrows(EmailAlreadyExistsException.class, () ->
-                userService.addUser("Hans", "hans@example.com", "1234")
+                userService.registerUser("Hans", "hans@example.com", "1234")
         );
     }
 
     @Test
     void shouldThrowIfPasswordBlank() {
         assertThrows(IllegalArgumentException.class, () ->
-                userService.addUser("Hans", "hans@example.com", "")
+                userService.registerUser("Hans", "hans@example.com", "")
         );
     }
 
     @Test
     void shouldThrowIfNameBlank() {
         assertThrows(IllegalArgumentException.class, () ->
-                userService.addUser("", "hans@example.com", "1234")
+                userService.registerUser("", "hans@example.com", "1234")
         );
     }
 
     @Test
     void shouldThrowIfEmailBlank() {
         assertThrows(IllegalArgumentException.class, () ->
-                userService.addUser("Hans", "", "1234")
+                userService.registerUser("Hans", "", "1234")
         );
     }
 
@@ -95,7 +95,7 @@ class UserServiceTest {
 
         User result = userService.loginUser("hans@example.com", "1234");
 
-        assertEquals("Hans", result.getUsername());
+        assertEquals("Hans", result.getDisplayName());
     }
 
     @Test
@@ -169,6 +169,6 @@ class UserServiceTest {
 
         User result = userService.getUser(1);
 
-        assertEquals("Hans", result.getUsername());
+        assertEquals("Hans", result.getDisplayName());
     }
 }

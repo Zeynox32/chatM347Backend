@@ -44,7 +44,7 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/user", "/user/login", "/user/logout").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/user/register", "/user/login", "/user/logout").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(sessionAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

@@ -10,12 +10,12 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
 
-@Document("Chat")
+@Document("ChatGroup")
 @Getter
 @Setter
-public class Chat {
+public class ChatGroup {
     @Id
-    private String chatId;
+    private String chatGroupId;
     private Meta meta;
     private List<Member> members;
     private List<Message> messages;

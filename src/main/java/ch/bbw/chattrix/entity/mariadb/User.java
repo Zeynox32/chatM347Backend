@@ -1,7 +1,15 @@
 package ch.bbw.chattrix.entity.mariadb;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+import java.util.List;
+
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
 @Table(name = "users")
 public class User {
@@ -11,7 +19,7 @@ public class User {
     private Integer id;
 
     @Column(nullable = false)
-    private String username;
+    private String displayName;
 
     @Column(name = "e_mail", nullable = false)
     private String eMail;
@@ -19,46 +27,12 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    public User(String username, String eMail, String password) {
-        this.username = username;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<SessionToken> sessionTokens;
+
+    public User(String displayName, String eMail, String password) {
+        this.displayName = displayName;
         this.eMail = eMail;
-        this.password = password;
-    }
-
-    public User() {
-
-    }
-
-
-    //For tests
-    public void setId(Integer id) {
-        this.id = id;
-    }
-    public Integer getId() {
-        return id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String geteMail() {
-        return eMail;
-    }
-
-    public void seteMail(String eMail) {
-        this.eMail = eMail;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
         this.password = password;
     }
 }

@@ -102,7 +102,7 @@ class SessionTokenRepositoryTest {
         User user = new User();
         user.seteMail("hans@example.com");
         user.setPassword("1234");
-        user.setUsername("Hans");
+        user.setDisplayName("Hans");
         return user;
     }
 }

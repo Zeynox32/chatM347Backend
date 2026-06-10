@@ -1,9 +1,15 @@
 package ch.bbw.chattrix.entity.mariadb;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.Instant;
 
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
 @Table(name = "session_tokens")
 public class SessionToken {
@@ -22,33 +28,9 @@ public class SessionToken {
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
-    public SessionToken() {
-    }
-
     public SessionToken(String token, User user, Instant createdAt) {
         this.token = token;
         this.user = user;
         this.createdAt = createdAt;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    //For tests
-    public void setToken(String token) {
-        this.token = token;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public Instant getCreatedAt() {
-        return createdAt;
     }
 }

@@ -53,7 +53,7 @@ class UserControllerTest {
         User user = new User("Hans", "hans@example.com", "hashed");
         user.setId(1);
 
-        when(userService.addUser(anyString(), anyString(), anyString()))
+        when(userService.registerUser(anyString(), anyString(), anyString()))
                 .thenReturn(user);
 
         when(sessionTokenService.createForUser(any(User.class)))
