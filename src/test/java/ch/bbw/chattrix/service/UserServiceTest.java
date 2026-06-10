@@ -47,7 +47,7 @@ class UserServiceTest {
         );
 
         assertEquals("Hans", result.getDisplayName());
-        assertEquals("hans@example.com", result.geteMail());
+        assertEquals("hans@example.com", result.getEMail());
     }
 
     @Test
@@ -142,10 +142,17 @@ class UserServiceTest {
         when(userRepository.findById(1))
                 .thenReturn(Optional.of(existing));
 
-        // 3. Execute
+        when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
         User result = userService.updateUser(1, update);
 
-        // (Don't forget to add your assertions here to check if 'result' is correct!)
+        assertNotNull(result, "Result should not be null");
+        assertEquals(1, result.getId(), "ID should remain unchanged");
+        assertEquals("Hans New", result.getDisplayName(), "Display name should be updated");
+        assertEquals("hans@example.com", result.getEMail(), "Email should be correct");
+        assertEquals("hashed", result.getPassword(), "Password should be stored securely as a hash");
+
+        verify(userRepository, times(1)).save(any(User.class));
     }
 
     @Test
