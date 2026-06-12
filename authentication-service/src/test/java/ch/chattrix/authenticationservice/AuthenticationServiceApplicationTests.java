@@ -1,10 +1,10 @@
-package ch.chattrix.authentificationservice;
+package ch.chattrix.authenticationservice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class AuthentificationServiceApplicationTests {
+class AuthenticationServiceApplicationTests {
 
     @Test
     void contextLoads() {

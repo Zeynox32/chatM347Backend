@@ -1,13 +1,13 @@
-package ch.chattrix.authentificationservice;
+package ch.chattrix.authenticationservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class AuthentificationServiceApplication {
+public class AuthenticationServiceApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(AuthentificationServiceApplication.class, args);
+        SpringApplication.run(AuthenticationServiceApplication.class, args);
     }
 
 }
