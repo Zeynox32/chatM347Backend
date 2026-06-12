@@ -13,7 +13,6 @@
     <module>websocket-service</module>
     <module>gateway-service</module>
     <module>user-service</module>
-    <module>shared</module>
 </modules>
 
 <dependencyManagement>
