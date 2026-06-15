@@ -1,9 +1,10 @@
-package ch.chattrix.gatewayservice.rabbitmq;
+package ch.chattrix.userservice.rabbitmq;
 
-import ch.chattrix.shared.rabbitmq.Exchanges;
 import ch.chattrix.shared.rabbitmq.Queues;
+import ch.chattrix.shared.rabbitmq.Exchanges;
 import ch.chattrix.shared.rabbitmq.RoutingKeys;
 import org.springframework.amqp.core.*;
+import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
@@ -15,13 +16,18 @@ import org.springframework.context.annotation.Configuration;
 public class RabbitConfig {
 
     @Bean
+    public DirectExchange userExchange() {
+        return new DirectExchange(Exchanges.USER);
+    }
+
+    @Bean
     public DirectExchange userResponseExchange() {
         return new DirectExchange(Exchanges.USER_RESPONSE);
     }
 
     @Bean
-    public Queue authResultQueue() {
-        return new Queue(Queues.AUTH_RESULT_QUEUE, true);
+    public Queue userProfileQueue() {
+        return new Queue(Queues.USER_PROFILE_QUEUE, true);
     }
 
     @Bean
@@ -30,11 +36,11 @@ public class RabbitConfig {
     }
 
     @Bean
-    public Binding authResultBinding() {
+    public Binding userProfileBinding() {
         return BindingBuilder
-                .bind(authResultQueue())
-                .to(userResponseExchange())
-                .with(RoutingKeys.AUTH_RESULT);
+                .bind(userProfileQueue())
+                .to(userExchange())
+                .with(RoutingKeys.USER_PROFILE);
     }
 
     @Bean
@@ -46,25 +52,31 @@ public class RabbitConfig {
     }
 
     @Bean
+    public SimpleRabbitListenerContainerFactory rabbitListenerContainerFactory(
+            ConnectionFactory connectionFactory) {
+
+        SimpleRabbitListenerContainerFactory factory =
+                new SimpleRabbitListenerContainerFactory();
+
+        factory.setConnectionFactory(connectionFactory);
+        factory.setMessageConverter(messageConverter());
+
+        return factory;
+    }
+
+    @Bean
     public MessageConverter messageConverter() {
         return new Jackson2JsonMessageConverter();
     }
 
     @Bean
     public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
+
         RabbitTemplate template = new RabbitTemplate(connectionFactory);
-
         template.setMessageConverter(messageConverter());
-
-        template.setMandatory(true);
-
-        template.setReturnsCallback(returned -> {
-            System.err.println("UNROUTED MESSAGE");
-            System.err.println("Exchange: " + returned.getExchange());
-            System.err.println("RoutingKey: " + returned.getRoutingKey());
-            System.err.println("Reply: " + returned.getReplyText());
-        });
 
         return template;
     }
+
+
 }

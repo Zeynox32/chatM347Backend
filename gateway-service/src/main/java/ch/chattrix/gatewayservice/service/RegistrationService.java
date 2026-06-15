@@ -3,7 +3,7 @@ package ch.chattrix.gatewayservice.service;
 import ch.chattrix.gatewayservice.aggregator.RegistrationAggregator;
 import ch.chattrix.gatewayservice.rabbitmq.RabbitCommandPublisher;
 import ch.chattrix.shared.command.user.AuthenticationRegisterCommand;
-import ch.chattrix.shared.command.user.UserProfileCreateCommand;
+import ch.chattrix.shared.command.user.UserProfileCommand;
 import ch.chattrix.shared.dto.user.RegisterUserRequest;
 import ch.chattrix.shared.response.ApiResponse;
 import org.springframework.stereotype.Service;
@@ -40,7 +40,7 @@ public class RegistrationService {
         );
 
         publisher.sendUser(
-                new UserProfileCreateCommand(
+                new UserProfileCommand(
                         request.getUsername(),
                         userUuid
                 ),

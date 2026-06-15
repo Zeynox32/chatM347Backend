@@ -18,7 +18,7 @@ public class RabbitResultListener {
     private final ObjectMapper objectMapper;
 
     public RabbitResultListener(RegistrationAggregator aggregator,
-                          ObjectMapper objectMapper) {
+                                ObjectMapper objectMapper) {
         this.aggregator = aggregator;
         this.objectMapper = objectMapper;
     }

@@ -2,6 +2,7 @@ package ch.chattrix.shared.command.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.UUID;
@@ -9,7 +10,8 @@ import java.util.UUID;
 @Getter
 @Setter
 @AllArgsConstructor
-public class UserProfileCreateCommand {
+@NoArgsConstructor
+public class UserProfileCommand {
     private String username;
     private UUID userUuid;
 }

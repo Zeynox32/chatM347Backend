@@ -1,9 +1,10 @@
-package ch.chattrix.gatewayservice.rabbitmq;
+package ch.chattrix.authenticationservice.rabbitmq;
 
 import ch.chattrix.shared.rabbitmq.Exchanges;
 import ch.chattrix.shared.rabbitmq.Queues;
 import ch.chattrix.shared.rabbitmq.RoutingKeys;
 import org.springframework.amqp.core.*;
+import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
@@ -13,10 +14,19 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RabbitConfig {
+    @Bean
+    public DirectExchange userExchange() {
+        return new DirectExchange(Exchanges.USER);
+    }
 
     @Bean
     public DirectExchange userResponseExchange() {
         return new DirectExchange(Exchanges.USER_RESPONSE);
+    }
+
+    @Bean
+    public Queue authRegisterQueue() {
+        return new Queue(Queues.AUTH_REGISTER_QUEUE, true);
     }
 
     @Bean
@@ -25,8 +35,11 @@ public class RabbitConfig {
     }
 
     @Bean
-    public Queue userResultQueue() {
-        return new Queue(Queues.USER_RESULT_QUEUE, true);
+    public Binding authRegisterBinding() {
+        return BindingBuilder
+                .bind(authRegisterQueue())
+                .to(userExchange())
+                .with(RoutingKeys.AUTH_REGISTER);
     }
 
     @Bean
@@ -38,32 +51,15 @@ public class RabbitConfig {
     }
 
     @Bean
-    public Binding userResultBinding() {
-        return BindingBuilder
-                .bind(userResultQueue())
-                .to(userResponseExchange())
-                .with(RoutingKeys.USER_RESULT);
-    }
-
-    @Bean
     public MessageConverter messageConverter() {
         return new Jackson2JsonMessageConverter();
     }
 
     @Bean
     public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
+
         RabbitTemplate template = new RabbitTemplate(connectionFactory);
-
         template.setMessageConverter(messageConverter());
-
-        template.setMandatory(true);
-
-        template.setReturnsCallback(returned -> {
-            System.err.println("UNROUTED MESSAGE");
-            System.err.println("Exchange: " + returned.getExchange());
-            System.err.println("RoutingKey: " + returned.getRoutingKey());
-            System.err.println("Reply: " + returned.getReplyText());
-        });
 
         return template;
     }
