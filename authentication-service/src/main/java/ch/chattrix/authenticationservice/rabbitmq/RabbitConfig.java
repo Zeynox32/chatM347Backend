@@ -4,7 +4,6 @@ import ch.chattrix.shared.rabbitmq.Exchanges;
 import ch.chattrix.shared.rabbitmq.Queues;
 import ch.chattrix.shared.rabbitmq.RoutingKeys;
 import org.springframework.amqp.core.*;
-import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
@@ -30,8 +29,8 @@ public class RabbitConfig {
     }
 
     @Bean
-    public Queue authResultQueue() {
-        return new Queue(Queues.AUTH_RESULT_QUEUE, true);
+    public Queue authLoginQueue() {
+        return new Queue(Queues.AUTH_LOGIN_QUEUE, true);
     }
 
     @Bean
@@ -43,11 +42,11 @@ public class RabbitConfig {
     }
 
     @Bean
-    public Binding authResultBinding() {
+    public Binding authLoginBinding() {
         return BindingBuilder
-                .bind(authResultQueue())
-                .to(userResponseExchange())
-                .with(RoutingKeys.AUTH_RESULT);
+                .bind(authLoginQueue())
+                .to(userExchange())
+                .with(RoutingKeys.AUTH_LOGIN);
     }
 
     @Bean

@@ -1,6 +1,7 @@
 package ch.chattrix.gatewayservice.rabbitmq;
 
 import ch.chattrix.shared.command.user.AuthenticationRegisterCommand;
+import ch.chattrix.shared.command.user.UserLoginCommand;
 import ch.chattrix.shared.command.user.UserProfileCommand;
 import ch.chattrix.shared.rabbitmq.Exchanges;
 import ch.chattrix.shared.rabbitmq.RoutingKeys;
@@ -16,7 +17,7 @@ public class RabbitCommandPublisher {
         this.rabbitTemplate = rabbitTemplate;
     }
 
-    public void sendAuth(AuthenticationRegisterCommand cmd, String correlationId) {
+    public void sendRegisterRequest(AuthenticationRegisterCommand cmd, String correlationId) {
         rabbitTemplate.convertAndSend(
                 Exchanges.USER,
                 RoutingKeys.AUTH_REGISTER,
@@ -28,10 +29,22 @@ public class RabbitCommandPublisher {
         );
     }
 
-    public void sendUser(UserProfileCommand cmd, String correlationId) {
+    public void sendCreateUserRequest(UserProfileCommand cmd, String correlationId) {
         rabbitTemplate.convertAndSend(
                 Exchanges.USER,
-                RoutingKeys.USER_PROFILE,
+                RoutingKeys.USER_CREATE,
+                cmd,
+                msg -> {
+                    msg.getMessageProperties().setCorrelationId(correlationId);
+                    return msg;
+                }
+        );
+    }
+
+    public void sendLoginRequest(UserLoginCommand cmd, String correlationId) {
+        rabbitTemplate.convertAndSend(
+                Exchanges.USER,
+                RoutingKeys.AUTH_LOGIN,
                 cmd,
                 msg -> {
                     msg.getMessageProperties().setCorrelationId(correlationId);

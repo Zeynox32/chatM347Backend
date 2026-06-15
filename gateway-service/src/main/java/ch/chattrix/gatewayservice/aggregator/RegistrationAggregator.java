@@ -2,7 +2,7 @@ package ch.chattrix.gatewayservice.aggregator;
 
 import ch.chattrix.shared.event.user.AuthenticationRegisterResultEvent;
 import ch.chattrix.shared.event.user.UserProfileResultEvent;
-import ch.chattrix.shared.response.ApiResponse;
+import ch.chattrix.shared.response.BasicApiResponse;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -13,11 +13,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public class RegistrationAggregator {
 
     private final Map<String, RegistrationResult> store = new ConcurrentHashMap<>();
-    private final Map<String, CompletableFuture<ApiResponse>> futures = new ConcurrentHashMap<>();
+    private final Map<String, CompletableFuture<BasicApiResponse>> futures = new ConcurrentHashMap<>();
 
-    public CompletableFuture<ApiResponse> create(String correlationId) {
+    public CompletableFuture<BasicApiResponse> createRegistration(String correlationId) {
         store.put(correlationId, new RegistrationResult());
-        CompletableFuture<ApiResponse> future = new CompletableFuture<>();
+        CompletableFuture<BasicApiResponse> future = new CompletableFuture<>();
         futures.put(correlationId, future);
         return future;
     }
@@ -61,7 +61,7 @@ public class RegistrationAggregator {
         }
 
         futures.remove(correlationId)
-                .complete(new ApiResponse(success, message));
+                .complete(new BasicApiResponse(success, message));
 
         store.remove(correlationId);
     }

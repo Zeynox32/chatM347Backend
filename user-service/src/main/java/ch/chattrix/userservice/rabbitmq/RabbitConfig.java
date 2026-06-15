@@ -27,12 +27,12 @@ public class RabbitConfig {
 
     @Bean
     public Queue userProfileQueue() {
-        return new Queue(Queues.USER_PROFILE_QUEUE, true);
+        return new Queue(Queues.USER_CREATE_QUEUE, true);
     }
 
     @Bean
     public Queue userResultQueue() {
-        return new Queue(Queues.USER_RESULT_QUEUE, true);
+        return new Queue(Queues.USER_CREATE_RESULT_QUEUE, true);
     }
 
     @Bean
@@ -40,7 +40,7 @@ public class RabbitConfig {
         return BindingBuilder
                 .bind(userProfileQueue())
                 .to(userExchange())
-                .with(RoutingKeys.USER_PROFILE);
+                .with(RoutingKeys.USER_CREATE);
     }
 
     @Bean
@@ -48,7 +48,7 @@ public class RabbitConfig {
         return BindingBuilder
                 .bind(userResultQueue())
                 .to(userResponseExchange())
-                .with(RoutingKeys.USER_RESULT);
+                .with(RoutingKeys.USER_RESULT_CREATE);
     }
 
     @Bean

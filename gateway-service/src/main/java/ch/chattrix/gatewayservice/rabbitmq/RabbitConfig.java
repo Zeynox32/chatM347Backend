@@ -21,28 +21,41 @@ public class RabbitConfig {
 
     @Bean
     public Queue authResultQueue() {
-        return new Queue(Queues.AUTH_RESULT_QUEUE, true);
+        return new Queue(Queues.AUTH_REGISTER_RESULT_QUEUE, true);
     }
 
     @Bean
     public Queue userResultQueue() {
-        return new Queue(Queues.USER_RESULT_QUEUE, true);
+        return new Queue(Queues.USER_CREATE_RESULT_QUEUE, true);
     }
 
     @Bean
-    public Binding authResultBinding() {
+    public Queue userLoginQueue() {
+        return new Queue(Queues.AUTH_LOGIN_RESULT_QUEUE, true);
+    }
+
+    @Bean
+    public Binding authRegisterResultBinding() {
         return BindingBuilder
                 .bind(authResultQueue())
                 .to(userResponseExchange())
-                .with(RoutingKeys.AUTH_RESULT);
+                .with(RoutingKeys.AUTH_RESULT_REGISTER);
     }
 
     @Bean
-    public Binding userResultBinding() {
+    public Binding userCreateResultBinding() {
         return BindingBuilder
                 .bind(userResultQueue())
                 .to(userResponseExchange())
-                .with(RoutingKeys.USER_RESULT);
+                .with(RoutingKeys.USER_RESULT_CREATE);
+    }
+
+    @Bean
+    public Binding authloginResultBinding() {
+        return BindingBuilder
+                .bind(userLoginQueue())
+                .to(userResponseExchange())
+                .with(RoutingKeys.AUTH_RESULT_LOGIN);
     }
 
     @Bean

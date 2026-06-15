@@ -27,7 +27,7 @@ public class UserListener {
         this.userService = userService;
     }
 
-    @RabbitListener(queues = Queues.USER_PROFILE_QUEUE)
+    @RabbitListener(queues = Queues.USER_CREATE_QUEUE)
     public void handleRegister(Message message) {
 
         String correlationId =
@@ -56,7 +56,7 @@ public class UserListener {
 
             rabbitTemplate.convertAndSend(
                     Exchanges.USER_RESPONSE,
-                    RoutingKeys.USER_RESULT,
+                    RoutingKeys.USER_RESULT_CREATE,
                     result,
                     msg -> {
                         msg.getMessageProperties().setCorrelationId(correlationId);
@@ -76,7 +76,7 @@ public class UserListener {
 
             rabbitTemplate.convertAndSend(
                     Exchanges.USER_RESPONSE,
-                    RoutingKeys.USER_RESULT,
+                    RoutingKeys.USER_RESULT_CREATE,
                     result,
                     msg -> {
                         msg.getMessageProperties().setCorrelationId(correlationId);

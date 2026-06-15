@@ -2,10 +2,14 @@ package ch.chattrix.authenticationservice.rabbitmq;
 
 import ch.chattrix.authenticationservice.service.AuthenticationService;
 import ch.chattrix.shared.command.user.AuthenticationRegisterCommand;
+import ch.chattrix.shared.command.user.UserLoginCommand;
+import ch.chattrix.shared.dto.user.LoginUserResponse;
 import ch.chattrix.shared.event.user.AuthenticationRegisterResultEvent;
+import ch.chattrix.shared.event.user.UserLoginResultEvent;
 import ch.chattrix.shared.rabbitmq.Exchanges;
 import ch.chattrix.shared.rabbitmq.Queues;
 import ch.chattrix.shared.rabbitmq.RoutingKeys;
+import ch.chattrix.shared.response.LoginApiResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -57,7 +61,7 @@ public class AuthenticationListener {
 
             rabbitTemplate.convertAndSend(
                     Exchanges.USER_RESPONSE,
-                    RoutingKeys.AUTH_RESULT,
+                    RoutingKeys.AUTH_RESULT_REGISTER,
                     result,
                     msg -> {
                         msg.getMessageProperties().setCorrelationId(correlationId);
@@ -77,7 +81,65 @@ public class AuthenticationListener {
 
             rabbitTemplate.convertAndSend(
                     Exchanges.USER_RESPONSE,
-                    RoutingKeys.AUTH_RESULT,
+                    RoutingKeys.AUTH_RESULT_REGISTER,
+                    errorResult,
+                    msg -> {
+                        msg.getMessageProperties().setCorrelationId(correlationId);
+                        return msg;
+                    }
+            );
+        }
+    }
+
+    @RabbitListener(queues = Queues.AUTH_LOGIN_QUEUE)
+    public void handleLogin(Message message) {
+
+        String correlationId =
+                message.getMessageProperties().getCorrelationId();
+
+        try {
+            UserLoginCommand command =
+                    objectMapper.readValue(
+                            message.getBody(),
+                            UserLoginCommand.class
+                    );
+
+            LoginApiResponse loginUserResponse = authService.login(
+                    command.getEmail(),
+                    command.getPassword()
+            );
+
+            UserLoginResultEvent result =
+                    new UserLoginResultEvent();
+
+            result.setSuccess(loginUserResponse.isSuccess());
+
+            if (!loginUserResponse.isSuccess()) {
+                result.setErrorMessage("Login failed");
+            }
+
+            rabbitTemplate.convertAndSend(
+                    Exchanges.USER_RESPONSE,
+                    RoutingKeys.AUTH_RESULT_LOGIN,
+                    result,
+                    msg -> {
+                        msg.getMessageProperties().setCorrelationId(correlationId);
+                        return msg;
+                    }
+            );
+
+        } catch (Exception e) {
+            UserLoginResultEvent errorResult =
+                    new UserLoginResultEvent();
+
+            errorResult.setSuccess(false);
+            errorResult.setErrorMessage(
+                    e.getMessage() != null ? e.getMessage() : "Unknown error"
+            );
+
+            rabbitTemplate.convertAndSend(
+                    Exchanges.USER_RESPONSE,
+                    RoutingKeys.AUTH_RESULT_LOGIN,
                     errorResult,
                     msg -> {
                         msg.getMessageProperties().setCorrelationId(correlationId);
