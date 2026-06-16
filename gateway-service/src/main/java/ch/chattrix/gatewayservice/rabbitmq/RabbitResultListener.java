@@ -32,7 +32,6 @@ public class RabbitResultListener {
 
     @RabbitListener(queues = Queues.AUTH_REGISTER_RESULT_QUEUE)
     public void handleAuthRegister(Message message) throws Exception {
-
         String correlationId =
                 message.getMessageProperties().getCorrelationId();
 

@@ -71,7 +71,7 @@ public class AuthenticationService {
         } catch (Exception e) {
             ApiResponse<Void> response = new ApiResponse<>();
             response.setSuccess(false);
-            response.setMessage("TIMEOUT_OR_ERROR");
+            response.setMessage("UNKNOWN_ERROR");
             response.setData(null);
             return response;
         }

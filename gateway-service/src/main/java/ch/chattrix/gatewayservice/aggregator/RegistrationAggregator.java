@@ -5,8 +5,7 @@ import ch.chattrix.shared.response.ApiResponse;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.*;
 
 @Component
 public class RegistrationAggregator {
@@ -14,28 +13,42 @@ public class RegistrationAggregator {
     private final Map<String, RegistrationState> store = new ConcurrentHashMap<>();
     private final Map<String, CompletableFuture<ApiResponse<Void>>> futures = new ConcurrentHashMap<>();
 
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+
+    private static final long TIMEOUT_SECONDS = 5;
+
     public CompletableFuture<ApiResponse<Void>> createRegistration(String correlationId) {
-        store.put(correlationId, new RegistrationState());
+
+        RegistrationState state = new RegistrationState();
+        store.put(correlationId, state);
+
         CompletableFuture<ApiResponse<Void>> future = new CompletableFuture<>();
         futures.put(correlationId, future);
+
+        scheduler.schedule(() -> timeout(correlationId), TIMEOUT_SECONDS, TimeUnit.SECONDS);
+
         return future;
     }
 
     public void handleAuth(String correlationId, BasicRabbitMqResultEvent event) {
+        if (correlationId == null || event == null) return;
 
         RegistrationState state = store.get(correlationId);
         if (state == null) return;
 
         state.setAuth(event);
+
         tryComplete(correlationId, state);
     }
 
     public void handleUser(String correlationId, BasicRabbitMqResultEvent event) {
+        if (correlationId == null || event == null) return;
 
         RegistrationState state = store.get(correlationId);
         if (state == null) return;
 
         state.setUser(event);
+
         tryComplete(correlationId, state);
     }
 
@@ -45,9 +58,11 @@ public class RegistrationAggregator {
             return;
         }
 
-        boolean success =
-                state.getAuth().isSuccess() &&
-                        state.getUser().isSuccess();
+        CompletableFuture<ApiResponse<Void>> future = futures.get(correlationId);
+        if (future == null || future.isDone()) return;
+
+        boolean success = state.getAuth().isSuccess()
+                && state.getUser().isSuccess();
 
         String message;
 
@@ -64,13 +79,38 @@ public class RegistrationAggregator {
         response.setMessage(message);
         response.setData(null);
 
-        CompletableFuture<ApiResponse<Void>> future =
-                futures.remove(correlationId);
+        completeSafely(correlationId, future, response);
+    }
 
-        if (future != null) {
+    private void timeout(String correlationId) {
+
+        CompletableFuture<ApiResponse<Void>> future = futures.get(correlationId);
+        RegistrationState state = store.get(correlationId);
+
+        if (future == null || future.isDone()) return;
+
+        ApiResponse<Void> response = new ApiResponse<>();
+        response.setSuccess(false);
+        response.setMessage("TIMEOUT");
+        response.setData(null);
+
+        completeSafely(correlationId, future, response);
+    }
+
+    private void completeSafely(
+            String correlationId,
+            CompletableFuture<ApiResponse<Void>> future,
+            ApiResponse<Void> response
+    ) {
+        if (future != null && !future.isDone()) {
             future.complete(response);
         }
 
+        cleanup(correlationId);
+    }
+
+    private void cleanup(String correlationId) {
         store.remove(correlationId);
+        futures.remove(correlationId);
     }
 }
