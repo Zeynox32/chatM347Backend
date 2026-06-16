@@ -1,4 +1,4 @@
-package ch.chattrix.shared.command.user;
+package ch.chattrix.shared.command;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,7 +11,6 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserProfileCommand {
-    private String username;
+public class UserLogoutCommand {
     private UUID userUuid;
 }

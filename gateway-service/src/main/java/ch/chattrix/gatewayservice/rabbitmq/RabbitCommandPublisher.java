@@ -1,8 +1,9 @@
 package ch.chattrix.gatewayservice.rabbitmq;
 
-import ch.chattrix.shared.command.user.AuthenticationRegisterCommand;
-import ch.chattrix.shared.command.user.UserLoginCommand;
-import ch.chattrix.shared.command.user.UserProfileCommand;
+import ch.chattrix.shared.command.AuthenticationRegisterCommand;
+import ch.chattrix.shared.command.UserLoginCommand;
+import ch.chattrix.shared.command.UserLogoutCommand;
+import ch.chattrix.shared.command.UserProfileCommand;
 import ch.chattrix.shared.rabbitmq.Exchanges;
 import ch.chattrix.shared.rabbitmq.RoutingKeys;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -40,4 +41,9 @@ public class RabbitCommandPublisher {
     public void sendLoginRequest(UserLoginCommand cmd, String correlationId) {
         send(cmd, RoutingKeys.AUTH_LOGIN, correlationId);
     }
+
+    public void sendLogoutRequest(UserLogoutCommand cmd, String correlationId) {
+        send(cmd, RoutingKeys.AUTH_LOGOUT, correlationId);
+    }
+
 }

@@ -61,6 +61,7 @@ Once you arrived at this place click environment variables and add:
 - RABBITMQ_USER
 - RABBITMQ_PASSWORD
 - FRONTEND_URL
+- JWT_SECRET
 
 ---
 

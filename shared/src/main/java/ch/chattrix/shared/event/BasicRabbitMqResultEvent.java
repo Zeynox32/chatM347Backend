@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class RabbitMqResultEvent {
+public class BasicRabbitMqResultEvent {
     private boolean success;
     private String errorMessage;
 }

@@ -34,6 +34,11 @@ public class RabbitConfig {
     }
 
     @Bean
+    public Queue authLogoutQueue() {
+        return new Queue(Queues.AUTH_LOGOUT_QUEUE, true);
+    }
+
+    @Bean
     public Binding authRegisterBinding() {
         return BindingBuilder
                 .bind(authRegisterQueue())
@@ -47,6 +52,14 @@ public class RabbitConfig {
                 .bind(authLoginQueue())
                 .to(userExchange())
                 .with(RoutingKeys.AUTH_LOGIN);
+    }
+
+    @Bean
+    public Binding authLogoutBinding() {
+        return BindingBuilder
+                .bind(authLogoutQueue())
+                .to(userExchange())
+                .with(RoutingKeys.AUTH_LOGOUT);
     }
 
     @Bean

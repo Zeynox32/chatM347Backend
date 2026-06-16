@@ -1,7 +1,7 @@
 package ch.chattrix.userservice.rabbitmq;
 
-import ch.chattrix.shared.command.user.UserProfileCommand;
-import ch.chattrix.shared.event.RabbitMqResultEvent;
+import ch.chattrix.shared.command.UserProfileCommand;
+import ch.chattrix.shared.event.BasicRabbitMqResultEvent;
 import ch.chattrix.shared.rabbitmq.Exchanges;
 import ch.chattrix.shared.rabbitmq.Queues;
 import ch.chattrix.shared.rabbitmq.RoutingKeys;
@@ -41,7 +41,7 @@ public class UserListener {
             ApiResponse<Void> serviceResponse =
                     userService.create(command.getUsername(), command.getUserUuid());
 
-            RabbitMqResultEvent event = new RabbitMqResultEvent();
+            BasicRabbitMqResultEvent event = new BasicRabbitMqResultEvent();
             event.setSuccess(serviceResponse.isSuccess());
             event.setErrorMessage(
                     serviceResponse.isSuccess()
@@ -61,7 +61,7 @@ public class UserListener {
 
         } catch (Exception e) {
 
-            RabbitMqResultEvent event = new RabbitMqResultEvent();
+            BasicRabbitMqResultEvent event = new BasicRabbitMqResultEvent();
             event.setSuccess(false);
             event.setErrorMessage(
                     e.getMessage() != null ? e.getMessage() : "UNKNOWN_ERROR"

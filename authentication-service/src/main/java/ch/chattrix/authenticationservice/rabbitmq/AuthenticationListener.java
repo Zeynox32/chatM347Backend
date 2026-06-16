@@ -1,9 +1,11 @@
 package ch.chattrix.authenticationservice.rabbitmq;
 
 import ch.chattrix.authenticationservice.service.AuthenticationService;
-import ch.chattrix.shared.command.user.AuthenticationRegisterCommand;
-import ch.chattrix.shared.command.user.UserLoginCommand;
-import ch.chattrix.shared.event.RabbitMqResultEvent;
+import ch.chattrix.shared.command.AuthenticationRegisterCommand;
+import ch.chattrix.shared.command.UserLoginCommand;
+import ch.chattrix.shared.command.UserLogoutCommand;
+import ch.chattrix.shared.event.BasicRabbitMqResultEvent;
+import ch.chattrix.shared.event.LoginResultEvent;
 import ch.chattrix.shared.rabbitmq.Exchanges;
 import ch.chattrix.shared.rabbitmq.Queues;
 import ch.chattrix.shared.rabbitmq.RoutingKeys;
@@ -47,7 +49,7 @@ public class AuthenticationListener {
                             command.getUserUuid()
                     );
 
-            RabbitMqResultEvent result = new RabbitMqResultEvent();
+            BasicRabbitMqResultEvent result = new BasicRabbitMqResultEvent();
             result.setSuccess(serviceResponse.isSuccess());
             result.setErrorMessage(serviceResponse.isSuccess() ? null : serviceResponse.getMessage());
 
@@ -63,7 +65,7 @@ public class AuthenticationListener {
 
         } catch (Exception e) {
 
-            RabbitMqResultEvent result = new RabbitMqResultEvent();
+            BasicRabbitMqResultEvent result = new BasicRabbitMqResultEvent();
             result.setSuccess(false);
             result.setErrorMessage(e.getMessage() != null ? e.getMessage() : "UNKNOWN_ERROR");
 
@@ -91,13 +93,15 @@ public class AuthenticationListener {
             ApiResponse<LoginData> serviceResponse =
                     authService.login(command.getEmail(), command.getPassword());
 
-            RabbitMqResultEvent result = new RabbitMqResultEvent();
+            LoginResultEvent result = new LoginResultEvent();
             result.setSuccess(serviceResponse.isSuccess());
             result.setErrorMessage(
                     serviceResponse.isSuccess()
                             ? null
                             : serviceResponse.getMessage()
             );
+            result.setAccessToken(serviceResponse.getData().getAccessToken());
+            result.setRefreshToken(serviceResponse.getData().getRefreshToken());
 
             rabbitTemplate.convertAndSend(
                     Exchanges.USER_RESPONSE,
@@ -111,13 +115,61 @@ public class AuthenticationListener {
 
         } catch (Exception e) {
 
-            RabbitMqResultEvent result = new RabbitMqResultEvent();
+            LoginResultEvent result = new LoginResultEvent();
             result.setSuccess(false);
             result.setErrorMessage(e.getMessage());
 
             rabbitTemplate.convertAndSend(
                     Exchanges.USER_RESPONSE,
                     RoutingKeys.AUTH_RESULT_LOGIN,
+                    result,
+                    msg -> {
+                        msg.getMessageProperties().setCorrelationId(correlationId);
+                        return msg;
+                    }
+            );
+        }
+    }
+
+    @RabbitListener(queues = Queues.AUTH_LOGOUT_QUEUE)
+    public void handleLogout(Message message) {
+
+        String correlationId = message.getMessageProperties().getCorrelationId();
+
+        try {
+            UserLogoutCommand command =
+                    objectMapper.readValue(message.getBody(), UserLogoutCommand.class);
+
+            ApiResponse<Void> serviceResponse =
+                    authService.logout(command.getUserUuid());
+
+            BasicRabbitMqResultEvent result = new BasicRabbitMqResultEvent();
+            result.setSuccess(serviceResponse.isSuccess());
+            result.setErrorMessage(
+                    serviceResponse.isSuccess()
+                            ? null
+                            : serviceResponse.getMessage()
+            );
+
+            rabbitTemplate.convertAndSend(
+                    Exchanges.USER_RESPONSE,
+                    RoutingKeys.AUTH_RESULT_LOGOUT,
+                    result,
+                    msg -> {
+                        msg.getMessageProperties().setCorrelationId(correlationId);
+                        return msg;
+                    }
+            );
+
+        } catch (Exception e) {
+
+            BasicRabbitMqResultEvent result = new BasicRabbitMqResultEvent();
+            result.setSuccess(false);
+            result.setErrorMessage(e.getMessage());
+
+            rabbitTemplate.convertAndSend(
+                    Exchanges.USER_RESPONSE,
+                    RoutingKeys.AUTH_RESULT_LOGOUT,
                     result,
                     msg -> {
                         msg.getMessageProperties().setCorrelationId(correlationId);

@@ -83,6 +83,8 @@ public class AuthenticationService {
             return new ApiResponse<>(false, "INVALID_CREDENTIALS", null);
         }
 
+        refreshTokenRepository.deleteByUserUuid(user.getUserUuid());
+
         String accessToken = jwtGenerator.generateAccessToken(
                 user.getUserUuid().toString(),
                 user.getEmail()
@@ -103,5 +105,18 @@ public class AuthenticationService {
         data.setRefreshToken(refreshToken);
 
         return new ApiResponse<>(true, "LOGIN_SUCCESS", data);
+    }
+
+    @Transactional
+    public ApiResponse<Void> logout(UUID userUuid) {
+
+        RefreshToken refreshToken = refreshTokenRepository.findByUserUuid(userUuid);
+
+        if (refreshToken == null) {
+            return new ApiResponse<>(false, "NO_REFRESH_TOKEN_FOUND", null);
+        }
+        refreshTokenRepository.deleteByUserUuid(userUuid);
+
+        return new ApiResponse<Void>(true, "LOGOUT_SUCCESS", null);
     }
 }
