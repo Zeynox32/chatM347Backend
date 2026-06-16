@@ -3,7 +3,6 @@ package ch.chattrix.authenticationservice.rabbitmq;
 import ch.chattrix.authenticationservice.service.AuthenticationService;
 import ch.chattrix.shared.command.user.AuthenticationRegisterCommand;
 import ch.chattrix.shared.command.user.UserLoginCommand;
-import ch.chattrix.shared.dto.user.LoginUserResponse;
 import ch.chattrix.shared.event.user.AuthenticationRegisterResultEvent;
 import ch.chattrix.shared.event.user.UserLoginResultEvent;
 import ch.chattrix.shared.rabbitmq.Exchanges;

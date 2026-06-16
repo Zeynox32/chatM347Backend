@@ -1,6 +1,5 @@
 package ch.chattrix.authenticationservice.utils;
 
-import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -46,31 +45,5 @@ public class JwtGenerator {
                 .setExpiration(new Date(now + refreshTokenExpirationMillis))
                 .signWith(signingKey, SignatureAlgorithm.HS256)
                 .compact();
-    }
-
-    public Claims extractClaims(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(signingKey)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-    }
-
-    public String extractSubject(String token) {
-        return extractClaims(token).getSubject();
-    }
-
-    public boolean isTokenValid(String token) {
-        try {
-            return extractClaims(token)
-                    .getExpiration()
-                    .after(new Date());
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    public String getTokenType(String token) {
-        return extractClaims(token).get("type", String.class);
     }
 }
