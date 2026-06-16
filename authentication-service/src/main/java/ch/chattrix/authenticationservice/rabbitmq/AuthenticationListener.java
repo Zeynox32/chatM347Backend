@@ -1,7 +1,7 @@
 package ch.chattrix.authenticationservice.rabbitmq;
 
 import ch.chattrix.authenticationservice.service.AuthenticationService;
-import ch.chattrix.shared.command.AuthenticationRegisterCommand;
+import ch.chattrix.shared.command.UserCredentialRegisterCommand;
 import ch.chattrix.shared.command.UserLoginCommand;
 import ch.chattrix.shared.command.UserLogoutCommand;
 import ch.chattrix.shared.event.BasicRabbitMqResultEvent;
@@ -39,8 +39,8 @@ public class AuthenticationListener {
         if (correlationId == null) return;
 
         try {
-            AuthenticationRegisterCommand command =
-                    objectMapper.readValue(message.getBody(), AuthenticationRegisterCommand.class);
+            UserCredentialRegisterCommand command =
+                    objectMapper.readValue(message.getBody(), UserCredentialRegisterCommand.class);
 
             ApiResponse<Void> serviceResponse =
                     authService.register(

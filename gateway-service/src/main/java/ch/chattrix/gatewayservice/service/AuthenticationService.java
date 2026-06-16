@@ -4,10 +4,10 @@ import ch.chattrix.gatewayservice.aggregator.LoginAggregator;
 import ch.chattrix.gatewayservice.aggregator.LogoutAggregator;
 import ch.chattrix.gatewayservice.aggregator.RegistrationAggregator;
 import ch.chattrix.gatewayservice.rabbitmq.RabbitCommandPublisher;
-import ch.chattrix.shared.command.AuthenticationRegisterCommand;
+import ch.chattrix.shared.command.UserCredentialRegisterCommand;
 import ch.chattrix.shared.command.UserLoginCommand;
 import ch.chattrix.shared.command.UserLogoutCommand;
-import ch.chattrix.shared.command.UserProfileCommand;
+import ch.chattrix.shared.command.UserRegisterCommand;
 import ch.chattrix.shared.dto.LoginUserRequest;
 import ch.chattrix.shared.dto.RegisterUserRequest;
 import ch.chattrix.shared.response.ApiResponse;
@@ -46,7 +46,7 @@ public class AuthenticationService {
         var future = registrationAggregator.createRegistration(correlationId);
 
         publisher.sendRegisterRequest(
-                new AuthenticationRegisterCommand(
+                new UserCredentialRegisterCommand(
                         request.getEmail(),
                         request.getPassword(),
                         userUuid
@@ -55,7 +55,7 @@ public class AuthenticationService {
         );
 
         publisher.sendCreateUserRequest(
-                new UserProfileCommand(
+                new UserRegisterCommand(
                         request.getUsername(),
                         userUuid
                 ),

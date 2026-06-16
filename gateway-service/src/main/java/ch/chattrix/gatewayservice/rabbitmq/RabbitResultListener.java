@@ -47,7 +47,7 @@ public class RabbitResultListener {
         registrationAggregator.handleAuth(correlationId, event);
     }
 
-    @RabbitListener(queues = Queues.USER_CREATE_RESULT_QUEUE)
+    @RabbitListener(queues = Queues.USER_REGISTER_RESULT_QUEUE)
     public void handleUserCreate(Message message) throws Exception {
 
         String correlationId =

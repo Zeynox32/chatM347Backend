@@ -11,7 +11,7 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthenticationRegisterCommand {
+public class UserCredentialRegisterCommand {
     private String email;
     private String password;
     private UUID userUuid;

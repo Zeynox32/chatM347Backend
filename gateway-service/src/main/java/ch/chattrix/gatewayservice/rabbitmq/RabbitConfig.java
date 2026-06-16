@@ -26,7 +26,7 @@ public class RabbitConfig {
 
     @Bean
     public Queue userResultQueue() {
-        return new Queue(Queues.USER_CREATE_RESULT_QUEUE, true);
+        return new Queue(Queues.USER_REGISTER_RESULT_QUEUE, true);
     }
 
     @Bean
@@ -52,7 +52,7 @@ public class RabbitConfig {
         return BindingBuilder
                 .bind(userResultQueue())
                 .to(userResponseExchange())
-                .with(RoutingKeys.USER_RESULT_CREATE);
+                .with(RoutingKeys.USER_RESULT_REGISTER);
     }
 
     @Bean

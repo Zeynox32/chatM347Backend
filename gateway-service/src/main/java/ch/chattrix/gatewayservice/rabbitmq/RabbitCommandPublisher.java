@@ -1,9 +1,9 @@
 package ch.chattrix.gatewayservice.rabbitmq;
 
-import ch.chattrix.shared.command.AuthenticationRegisterCommand;
+import ch.chattrix.shared.command.UserCredentialRegisterCommand;
 import ch.chattrix.shared.command.UserLoginCommand;
 import ch.chattrix.shared.command.UserLogoutCommand;
-import ch.chattrix.shared.command.UserProfileCommand;
+import ch.chattrix.shared.command.UserRegisterCommand;
 import ch.chattrix.shared.rabbitmq.Exchanges;
 import ch.chattrix.shared.rabbitmq.RoutingKeys;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -30,12 +30,12 @@ public class RabbitCommandPublisher {
         );
     }
 
-    public void sendRegisterRequest(AuthenticationRegisterCommand cmd, String correlationId) {
+    public void sendRegisterRequest(UserCredentialRegisterCommand cmd, String correlationId) {
         send(cmd, RoutingKeys.AUTH_REGISTER, correlationId);
     }
 
-    public void sendCreateUserRequest(UserProfileCommand cmd, String correlationId) {
-        send(cmd, RoutingKeys.USER_CREATE, correlationId);
+    public void sendCreateUserRequest(UserRegisterCommand cmd, String correlationId) {
+        send(cmd, RoutingKeys.USER_REGISTER, correlationId);
     }
 
     public void sendLoginRequest(UserLoginCommand cmd, String correlationId) {

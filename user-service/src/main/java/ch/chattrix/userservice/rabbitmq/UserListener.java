@@ -1,6 +1,6 @@
 package ch.chattrix.userservice.rabbitmq;
 
-import ch.chattrix.shared.command.UserProfileCommand;
+import ch.chattrix.shared.command.UserRegisterCommand;
 import ch.chattrix.shared.event.BasicRabbitMqResultEvent;
 import ch.chattrix.shared.rabbitmq.Exchanges;
 import ch.chattrix.shared.rabbitmq.Queues;
@@ -28,15 +28,15 @@ public class UserListener {
         this.userService = userService;
     }
 
-    @RabbitListener(queues = Queues.USER_CREATE_QUEUE)
+    @RabbitListener(queues = Queues.USER_REGISTER_QUEUE)
     public void handleUserCreate(Message message) {
 
         String correlationId = message.getMessageProperties().getCorrelationId();
         if (correlationId == null) return;
 
         try {
-            UserProfileCommand command =
-                    objectMapper.readValue(message.getBody(), UserProfileCommand.class);
+            UserRegisterCommand command =
+                    objectMapper.readValue(message.getBody(), UserRegisterCommand.class);
 
             ApiResponse<Void> serviceResponse =
                     userService.create(command.getUsername(), command.getUserUuid());
@@ -51,7 +51,7 @@ public class UserListener {
 
             rabbitTemplate.convertAndSend(
                     Exchanges.USER_RESPONSE,
-                    RoutingKeys.USER_RESULT_CREATE,
+                    RoutingKeys.USER_RESULT_REGISTER,
                     event,
                     msg -> {
                         msg.getMessageProperties().setCorrelationId(correlationId);
@@ -69,7 +69,7 @@ public class UserListener {
 
             rabbitTemplate.convertAndSend(
                     Exchanges.USER_RESPONSE,
-                    RoutingKeys.USER_RESULT_CREATE,
+                    RoutingKeys.USER_RESULT_REGISTER,
                     event,
                     msg -> {
                         msg.getMessageProperties().setCorrelationId(correlationId);

@@ -11,7 +11,7 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserProfileCommand {
+public class UserRegisterCommand {
     private String username;
     private UUID userUuid;
 }
