@@ -1,5 +1,6 @@
 package ch.chattrix.gatewayservice;
 
+import ch.chattrix.shared.utils.JwtValidator;
 import org.junit.jupiter.api.Test;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -10,6 +11,9 @@ import org.springframework.test.context.ActiveProfiles;
 @SpringBootTest
 @ActiveProfiles("test")
 class GatewayServiceApplicationTests {
+
+	@MockBean
+	private JwtValidator jwtValidator;
 
 	@MockBean
 	private ConnectionFactory connectionFactory;
