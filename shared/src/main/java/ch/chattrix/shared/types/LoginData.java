@@ -1,0 +1,15 @@
+package ch.chattrix.shared.types;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+public class LoginData {
+    private String accessToken;
+    private String refreshToken;
+}

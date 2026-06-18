@@ -1,0 +1,16 @@
+package ch.chattrix.shared.event;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class RefreshTokenResultEvent {
+    private boolean success;
+    private String errorMessage;
+    private String accessToken;
+}

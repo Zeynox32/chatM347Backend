@@ -1,19 +1,52 @@
-name: Chattrix-Backend CI
+name: CI Pipeline
 
 on:
+  push:
+    branches:
+      - main
   pull_request:
     branches:
       - main
 
 jobs:
-  build-and-test:
+  changes:
     runs-on: ubuntu-latest
-
+    outputs:
+      shared: ${{ steps.filter.outputs.shared }}
+      authentication-service: ${{ steps.filter.outputs.authentication-service }}
+      user-service: ${{ steps.filter.outputs.user-service }}
+      chat-service: ${{ steps.filter.outputs.chat-service }}
+      gateway-service: ${{ steps.filter.outputs.gateway-service }}
+      websocket-service: ${{ steps.filter.outputs.websocket-service }}
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Java
+      - name: Detect Changes
+        uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            shared:
+              - 'shared/**'
+            authentication-service:
+              - 'authentication-service/**'
+            user-service:
+              - 'user-service/**'
+            chat-service:
+              - 'chat-service/**'
+            gateway-service:
+              - 'gateway-service/**'
+            websocket-service:
+              - 'websocket-service/**'
+
+  build-authentication-service:
+    needs: changes
+    runs-on: ubuntu-latest
+    if: needs.changes.outputs.authentication-service == 'true' || needs.changes.outputs.shared == 'true'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -21,25 +54,87 @@ jobs:
           cache: maven
 
       - name: Build and Test
-        run: mvn -B clean verify
-
-      - name: Upload Test Reports
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-reports
-          path: target/surefire-reports/
-
-      - name: Upload JAR
-        uses: actions/upload-artifact@v4
-        with:
-          name: chattrix-backend-jar
-          path: target/chattrix-backend.jar
-
-      - name: Upload Coverage Report
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-report
-          path: target/site/jacoco/
+        run: mvn -f pom.xml -pl authentication-service -am clean package
 
       - name: Build Docker Image
-        run: docker build --pull -t chattrix-backend:test-ci -f production/Dockerfile .
+        run: docker build -t authentication-service:latest ./authentication-service
+
+  build-user-service:
+    needs: changes
+    runs-on: ubuntu-latest
+    if: needs.changes.outputs.user-service == 'true' || needs.changes.outputs.shared == 'true'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: maven
+
+      - name: Build and Test
+        run: mvn -f pom.xml -pl user-service -am clean package
+
+      - name: Build Docker Image
+        run: docker build -t user-service:latest ./user-service
+
+  build-chat-service:
+    needs: changes
+    runs-on: ubuntu-latest
+    if: needs.changes.outputs.chat-service == 'true' || needs.changes.outputs.shared == 'true'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: maven
+
+      - name: Build and Test
+        run: mvn -f pom.xml -pl chat-service -am clean package
+
+      - name: Build Docker Image
+        run: docker build -t chat-service:latest ./chat-service
+
+  build-gateway-service:
+    needs: changes
+    runs-on: ubuntu-latest
+    if: needs.changes.outputs.gateway-service == 'true' || needs.changes.outputs.shared == 'true'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: maven
+
+      - name: Build and Test
+        run: mvn -f pom.xml -pl gateway-service -am clean package
+
+      - name: Build Docker Image
+        run: docker build -t gateway-service:latest ./gateway-service
+
+  build-websocket-service:
+    needs: changes
+    runs-on: ubuntu-latest
+    if: needs.changes.outputs.websocket-service == 'true' || needs.changes.outputs.shared == 'true'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: maven
+
+      - name: Build and Test
+        run: mvn -f pom.xml -pl websocket-service -am clean package
+
+      - name: Build Docker Image
+        run: docker build -t websocket-service:latest ./websocket-service

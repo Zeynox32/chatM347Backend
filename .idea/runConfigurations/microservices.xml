@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="microservices" type="CompoundRunConfigurationType">
+    <toRun name="authentication-service" type="SpringBootApplicationConfigurationType" />
+    <toRun name="chat-service" type="SpringBootApplicationConfigurationType" />
+    <toRun name="gateway-service" type="SpringBootApplicationConfigurationType" />
+    <toRun name="user-service" type="SpringBootApplicationConfigurationType" />
+    <toRun name="websocket-service" type="SpringBootApplicationConfigurationType" />
+    <method v="2" />
+  </configuration>
+</component>

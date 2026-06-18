@@ -1,23 +1,20 @@
 services:
-  db:
+  mariadb:
     image: mariadb:jammy
-    container_name: chattrix-db
+    container_name: chattrix-mariadb
     restart: always
-
     environment:
-      MARIADB_ROOT_PASSWORD: ${DB_PASSWORD}
-      MARIADB_DATABASE: ${DB_NAME}
-      MARIADB_USER: ${DB_USER}
-      MARIADB_PASSWORD: ${DB_PASSWORD}
-
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+      MARIADB_DATABASE: ${MARIADB_ROOT_DATABASE}
+      MARIADB_USER: ${MARIADB_APP_USER}
+      MARIADB_PASSWORD: ${MARIADB_APP_PASSWORD}
     ports:
-      - "3307:3306"
-
+      - "${MARIADB_PORT}:3306"
     volumes:
-      - chattrix-mysql-local-data:/var/lib/mysql
-
+      - chattrix-mariadb-data:/var/lib/mysql
+      - ./mariadb/init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
-      test: ["CMD", "mariadb-admin", "ping", "-h", "localhost"]
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -26,17 +23,68 @@ services:
     image: phpmyadmin/phpmyadmin
     container_name: chattrix-phpmyadmin
     restart: always
-
     environment:
-      PMA_HOST: db
-      PMA_USER: ${DB_USER}
-      PMA_PASSWORD: ${DB_PASSWORD}
-
+      PMA_HOST: mariadb
+      PMA_USER: ${MARIADB_ROOT_USER}
+      PMA_PASSWORD: ${MARIADB_ROOT_PASSWORD}
     ports:
-      - "8090:80"
-
+      - "${PHPMYADMIN_PORT}:80"
     depends_on:
-      - db
+      - mariadb
+
+  mongodb:
+    image: mongo:7
+    container_name: chattrix-mongodb
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+      MONGO_APP_USER: ${MONGO_APP_USER}
+      MONGO_APP_PASSWORD: ${MONGO_APP_PASSWORD}
+      MONGO_APP_DB: ${MONGO_APP_DB}
+    ports:
+      - "${MONGODB_PORT}:27017"
+    volumes:
+      - chattrix-mongo-data:/data/db
+      - ./mongodb/init.sh:/docker-entrypoint-initdb.d/init.sh:ro
+
+  mongo-express:
+    image: mongo-express
+    container_name: chattrix-mongo-express
+    restart: always
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGO_ROOT_USER}
+      ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGO_ROOT_PASSWORD}
+      ME_CONFIG_MONGODB_SERVER: mongodb
+      ME_CONFIG_BASICAUTH_USERNAME: ${MONGO_EXPRESS_USER}
+      ME_CONFIG_BASICAUTH_PASSWORD: ${MONGO_EXPRESS_PASSWORD}
+    ports:
+      - "127.0.0.1:${MONGO_EXPRESS_PORT}:8081"
+    depends_on:
+      - mongodb
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: chattrix-rabbitmq
+    restart: always
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+    ports:
+      - "${RABBITMQ_PORT}:5672"
+      - "${RABBITMQ_UI_PORT}:15672"
+
+  redis:
+    image: redis:7
+    container_name: chattrix-redis
+    restart: always
+    command: redis-server --requirepass ${REDIS_PASSWORD}
+    ports:
+      - "${REDIS_PORT}:6379"
+    volumes:
+      - chattrix-redis-data:/data
 
 volumes:
-  chattrix-mysql-local-data:
+  chattrix-mariadb-data:
+  chattrix-mongo-data:
+  chattrix-redis-data:
