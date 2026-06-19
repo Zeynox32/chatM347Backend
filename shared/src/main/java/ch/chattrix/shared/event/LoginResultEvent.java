@@ -9,9 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginResultEvent {
-    private boolean success;
-    private String errorMessage;
+public class LoginResultEvent extends BasicRabbitMqResultEvent {
     private String refreshToken;
     private String accessToken;
 }

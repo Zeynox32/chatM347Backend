@@ -9,8 +9,6 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class GetOneUserEmailDataResultEvent {
-    private boolean success;
-    private String errorMessage;
+public class GetOneUserEmailDataResultEvent extends BasicRabbitMqResultEvent {
     private String email;
 }

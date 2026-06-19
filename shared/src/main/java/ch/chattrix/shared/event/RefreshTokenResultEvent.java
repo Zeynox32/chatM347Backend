@@ -9,8 +9,6 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class RefreshTokenResultEvent {
-    private boolean success;
-    private String errorMessage;
+public class RefreshTokenResultEvent extends BasicRabbitMqResultEvent {
     private String accessToken;
 }

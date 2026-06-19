@@ -12,9 +12,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class GetOneUserBasicDataResultEvent {
-    private boolean success;
-    private String errorMessage;
+public class GetOneUserBasicDataResultEvent extends BasicRabbitMqResultEvent {
     private UUID userUuid;
     private String username;
     private Date createdAt;

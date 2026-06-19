@@ -12,8 +12,6 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class GetAllUsersResultEvent {
-    private boolean success;
-    private String errorMessage;
+public class GetAllUsersResultEvent extends BasicRabbitMqResultEvent{
     private List<UserAnonymData> users;
 }
