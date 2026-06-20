@@ -180,11 +180,12 @@ public class AuthenticationService {
             return new ApiResponse<>(false, "NO_CREDENTIAL_FOUND", null);
         }
 
-        if (email == null && password == null) {
+        if ((email == null || email.isBlank()) &&
+                (password == null || password.isBlank())) {
             return new ApiResponse<>(false, "NO_CREDENTIAL_TO_EDIT_FOUND", null);
         }
 
-        if (email != null &&
+        if (email != null && !email.isBlank() &&
                 userCredentialRepository.findByEmail(email)
                         .filter(u -> !u.getUserUuid().equals(userUuid))
                         .isPresent()) {

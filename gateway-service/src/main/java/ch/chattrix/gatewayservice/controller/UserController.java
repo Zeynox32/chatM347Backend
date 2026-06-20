@@ -46,9 +46,10 @@ public class UserController {
         return userService.getOneUser(userUuid);
     }
 
-    @PutMapping("/edit/credential")
+    @PatchMapping("/edit/credential")
     public ApiResponse<Void> editCredential(
-            @CookieValue(value = "accessToken", required = false) String token, @RequestBody EditCredentialRequest request) {
+            @CookieValue(value = "accessToken", required = false) String token,
+            @RequestBody EditCredentialRequest request) {
 
         if (token == null || !jwtValidator.isTokenValid(token)) {
             return new ApiResponse<>(false, "INVALID_ACCESS_TOKEN", null);
@@ -56,6 +57,10 @@ public class UserController {
 
         UUID userUuid = UUID.fromString(jwtValidator.extractSubject(token));
 
-        return userService.editCredential(request.getEmail(), request.getPassword(), userUuid);
+        return userService.editCredential(
+                request.getEmail(),
+                request.getPassword(),
+                userUuid
+        );
     }
 }
