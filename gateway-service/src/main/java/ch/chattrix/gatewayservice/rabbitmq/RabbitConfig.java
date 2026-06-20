@@ -3,11 +3,12 @@ package ch.chattrix.gatewayservice.rabbitmq;
 import ch.chattrix.shared.rabbitmq.Exchanges;
 import ch.chattrix.shared.rabbitmq.Queues;
 import ch.chattrix.shared.rabbitmq.RoutingKeys;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
-import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -25,73 +26,167 @@ public class RabbitConfig {
     }
 
     @Bean
-    public Queue authResultQueue() {
-        return new Queue(Queues.AUTH_REGISTER_RESULT_QUEUE, true);
-    }
-
-    @Bean
-    public Queue userResultQueue() {
+    public Queue userRegisterResultQueue() {
         return new Queue(Queues.USER_REGISTER_RESULT_QUEUE, true);
     }
 
     @Bean
-    public Queue userLoginQueue() {
+    public Queue userGetAllResultQueue() {
+        return new Queue(Queues.USER_GET_ALL_RESULT_QUEUE, true);
+    }
+
+    @Bean
+    public Queue userGetBaseDataResultQueue() {
+        return new Queue(Queues.USER_GET_BASE_DATA_RESULT_QUEUE, true);
+    }
+
+    @Bean
+    public Queue authRegisterResultQueue() {
+        return new Queue(Queues.AUTH_REGISTER_RESULT_QUEUE, true);
+    }
+
+    @Bean
+    public Queue authDeleteResultQueue() {
+        return new Queue(Queues.AUTH_DELETE_RESULT_QUEUE, true);
+    }
+
+    @Bean
+    public Queue userDeleteResultQueue() {
+        return new Queue(Queues.USER_DELETE_RESULT_QUEUE, true);
+    }
+
+    @Bean
+    public Queue authLoginResultQueue() {
         return new Queue(Queues.AUTH_LOGIN_RESULT_QUEUE, true);
     }
 
     @Bean
-    public Queue refreshTokenQueue() {
+    public Queue authRefreshResultQueue() {
         return new Queue(Queues.AUTH_REFRESH_RESULT_QUEUE, true);
     }
 
     @Bean
-    public Queue userLogoutQueue() {
+    public Queue authLogoutResultQueue() {
         return new Queue(Queues.AUTH_LOGOUT_RESULT_QUEUE, true);
     }
 
     @Bean
-    public Binding authRegisterResultBinding() {
-        return BindingBuilder
-                .bind(authResultQueue())
-                .to(authenticationResponseExchange())
-                .with(RoutingKeys.AUTH_RESULT_REGISTER);
+    public Queue authGetEmailResultQueue() {
+        return new Queue(Queues.AUTH_GET_EMAIL_RESULT_QUEUE, true);
+    }
+
+    @Bean
+    public Queue authEditCredentialResultQueue() {
+        return new Queue(Queues.AUTH_EDIT_CREDENTIAL_RESULT_QUEUE, true);
+    }
+
+    @Bean
+    public Queue userEditUsernameResultQueue() {
+        return new Queue(Queues.USER_EDIT_USERNAME_RESULT_QUEUE, true);
     }
 
     @Bean
     public Binding userRegisterResultBinding() {
         return BindingBuilder
-                .bind(userResultQueue())
+                .bind(userRegisterResultQueue())
                 .to(userResponseExchange())
                 .with(RoutingKeys.USER_RESULT_REGISTER);
     }
 
     @Bean
-    public Binding authloginResultBinding() {
+    public Binding userGetAllResultBinding() {
         return BindingBuilder
-                .bind(userLoginQueue())
+                .bind(userGetAllResultQueue())
+                .to(userResponseExchange())
+                .with(RoutingKeys.USER_RESULT_GET_ALL);
+    }
+
+    @Bean
+    public Binding userGetBaseDataResultBinding() {
+        return BindingBuilder
+                .bind(userGetBaseDataResultQueue())
+                .to(userResponseExchange())
+                .with(RoutingKeys.USER_RESULT_GET_BASE_DATA);
+    }
+
+    @Bean
+    public Binding authRegisterResultBinding() {
+        return BindingBuilder
+                .bind(authRegisterResultQueue())
+                .to(authenticationResponseExchange())
+                .with(RoutingKeys.AUTH_RESULT_REGISTER);
+    }
+
+    @Bean
+    public Binding authLoginResultBinding() {
+        return BindingBuilder
+                .bind(authLoginResultQueue())
                 .to(authenticationResponseExchange())
                 .with(RoutingKeys.AUTH_RESULT_LOGIN);
     }
 
     @Bean
-    public Binding authRefreshTokenResultBinding() {
+    public Binding authRefreshResultBinding() {
         return BindingBuilder
-                .bind(refreshTokenQueue())
+                .bind(authRefreshResultQueue())
                 .to(authenticationResponseExchange())
                 .with(RoutingKeys.AUTH_RESULT_REFRESH);
     }
 
     @Bean
-    public Binding authlogoutResultBinding() {
+    public Binding authLogoutResultBinding() {
         return BindingBuilder
-                .bind(userLogoutQueue())
+                .bind(authLogoutResultQueue())
                 .to(authenticationResponseExchange())
                 .with(RoutingKeys.AUTH_RESULT_LOGOUT);
     }
 
     @Bean
-    public MessageConverter messageConverter() {
-        return new Jackson2JsonMessageConverter();
+    public Binding authGetEmailResultBinding() {
+        return BindingBuilder
+                .bind(authGetEmailResultQueue())
+                .to(authenticationResponseExchange())
+                .with(RoutingKeys.AUTH_RESULT_GET_EMAIL);
+    }
+
+    @Bean
+    public Binding authEditCredentialResultBinding() {
+        return BindingBuilder
+                .bind(authEditCredentialResultQueue())
+                .to(authenticationResponseExchange())
+                .with(RoutingKeys.AUTH_RESULT_EDIT_CREDENTIAL);
+    }
+
+    @Bean
+    public Binding userEditUsernameResultBinding() {
+        return BindingBuilder
+                .bind(userEditUsernameResultQueue())
+                .to(userResponseExchange())
+                .with(RoutingKeys.USER_RESULT_EDIT_USERNAME);
+    }
+
+    @Bean
+    public Jackson2JsonMessageConverter messageConverter() {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+
+        return new Jackson2JsonMessageConverter(mapper);
+    }
+
+    @Bean
+    public Binding userDeleteResultBinding() {
+        return BindingBuilder
+                .bind(userDeleteResultQueue())
+                .to(userResponseExchange())
+                .with(RoutingKeys.USER_RESULT_DELETE);
+    }
+
+    @Bean
+    public Binding authDeleteResultBinding() {
+        return BindingBuilder
+                .bind(authDeleteResultQueue())
+                .to(authenticationResponseExchange())
+                .with(RoutingKeys.AUTH_RESULT_DELETE);
     }
 
     @Bean
@@ -99,7 +194,6 @@ public class RabbitConfig {
         RabbitTemplate template = new RabbitTemplate(connectionFactory);
 
         template.setMessageConverter(messageConverter());
-
         template.setMandatory(true);
 
         template.setReturnsCallback(returned -> {

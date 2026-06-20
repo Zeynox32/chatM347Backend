@@ -9,7 +9,6 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginResultEvent extends BasicRabbitMqResultEvent {
-    private String refreshToken;
-    private String accessToken;
+public class GetOneUserEmailDataResultEvent extends BasicRabbitMqResultEvent {
+    private String email;
 }

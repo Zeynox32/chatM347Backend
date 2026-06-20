@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.concurrent.*;
 
 @Component
-public class RegistrationAggregator {
+public class DeleteUserAggregator {
 
     private final Map<String, AuthAndUserServiceState> store = new ConcurrentHashMap<>();
     private final Map<String, CompletableFuture<ApiResponse<Void>>> futures = new ConcurrentHashMap<>();
@@ -17,7 +17,7 @@ public class RegistrationAggregator {
 
     private static final long TIMEOUT_SECONDS = 5;
 
-    public CompletableFuture<ApiResponse<Void>> createRegistration(String correlationId) {
+    public CompletableFuture<ApiResponse<Void>> createDelete(String correlationId) {
 
         AuthAndUserServiceState state = new AuthAndUserServiceState();
         store.put(correlationId, state);
@@ -30,7 +30,8 @@ public class RegistrationAggregator {
         return future;
     }
 
-    public void handleAuth(String correlationId, BasicRabbitMqResultEvent event) {
+    public void handleAuthenticationDelete(String correlationId, BasicRabbitMqResultEvent event) {
+
         if (correlationId == null || event == null) return;
 
         AuthAndUserServiceState state = store.get(correlationId);
@@ -41,7 +42,8 @@ public class RegistrationAggregator {
         tryComplete(correlationId, state);
     }
 
-    public void handleUser(String correlationId, BasicRabbitMqResultEvent event) {
+    public void handleUserDelete(String correlationId, BasicRabbitMqResultEvent event) {
+
         if (correlationId == null || event == null) return;
 
         AuthAndUserServiceState state = store.get(correlationId);
@@ -54,15 +56,13 @@ public class RegistrationAggregator {
 
     private void tryComplete(String correlationId, AuthAndUserServiceState state) {
 
-        if (state.getAuth() == null || state.getUser() == null) {
-            return;
-        }
-
         CompletableFuture<ApiResponse<Void>> future = futures.get(correlationId);
+
         if (future == null || future.isDone()) return;
 
-        boolean success = state.getAuth().isSuccess()
-                && state.getUser().isSuccess();
+        if (state.getAuth() == null || state.getUser() == null) return;
+
+        boolean success = state.getAuth().isSuccess() && state.getUser().isSuccess();
 
         String message;
 
@@ -71,7 +71,7 @@ public class RegistrationAggregator {
         } else if (!state.getUser().isSuccess()) {
             message = state.getUser().getErrorMessage();
         } else {
-            message = "USER_REGISTERED_SUCCESSFULLY";
+            message = "USER_DELETED_SUCCESSFULLY";
         }
 
         ApiResponse<Void> response = new ApiResponse<>();
@@ -85,7 +85,6 @@ public class RegistrationAggregator {
     private void timeout(String correlationId) {
 
         CompletableFuture<ApiResponse<Void>> future = futures.get(correlationId);
-        AuthAndUserServiceState state = store.get(correlationId);
 
         if (future == null || future.isDone()) return;
 

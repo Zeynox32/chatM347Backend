@@ -54,16 +54,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/refresh")
-    public ApiResponse<Void> refresh(HttpServletRequest request, HttpServletResponse response) {
-        String token = null;
-        if (request.getCookies() != null) {
-            for (jakarta.servlet.http.Cookie cookie : request.getCookies()) {
-                if ("refreshToken".equals(cookie.getName())) {
-                    token = cookie.getValue();
-                    break;
-                }
-            }
-        }
+    public ApiResponse<Void> refresh(@CookieValue(value = "refreshToken", required = false) String token, HttpServletResponse response) {
 
         if (token == null) {
             return new ApiResponse<>(false, "INVALID_REFRESH_TOKEN", null);
@@ -81,19 +72,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/logout")
-    public ApiResponse<Void> logout(HttpServletRequest request, HttpServletResponse response) {
-
-        String token = null;
-
-        if (request.getCookies() != null) {
-            for (jakarta.servlet.http.Cookie cookie : request.getCookies()) {
-                if ("accessToken".equals(cookie.getName())) {
-                    token = cookie.getValue();
-                    break;
-                }
-            }
-        }
-
+    public ApiResponse<Void> logout(@CookieValue(value = "accessToken", required = false) String token, HttpServletResponse response) {
         if (token == null || !jwtValidator.isTokenValid(token)) {
             return new ApiResponse<>(false, "INVALID_TOKEN", null);
         }
@@ -106,12 +85,7 @@ public class AuthenticationController {
             return serviceResponse;
         }
 
-        ResponseCookie deleteAccess = ResponseCookie.from("accessToken", "").httpOnly(true).secure(false).path("/").sameSite("Lax").maxAge(0).build();
-
-        ResponseCookie deleteRefresh = ResponseCookie.from("refreshToken", "").httpOnly(true).secure(false).path("/").sameSite("Lax").maxAge(0).build();
-
-        response.addHeader(HttpHeaders.SET_COOKIE, deleteAccess.toString());
-        response.addHeader(HttpHeaders.SET_COOKIE, deleteRefresh.toString());
+        UserController.deleteCookies(response);
 
         return serviceResponse;
     }

@@ -1,9 +1,6 @@
 package ch.chattrix.gatewayservice.service;
 
-import ch.chattrix.gatewayservice.aggregator.LoginAggregator;
-import ch.chattrix.gatewayservice.aggregator.LogoutAggregator;
-import ch.chattrix.gatewayservice.aggregator.RefreshTokenAggregator;
-import ch.chattrix.gatewayservice.aggregator.RegistrationAggregator;
+import ch.chattrix.gatewayservice.aggregator.*;
 import ch.chattrix.gatewayservice.rabbitmq.RabbitCommandPublisher;
 import ch.chattrix.shared.command.*;
 import ch.chattrix.shared.dto.LoginUserRequest;
@@ -25,19 +22,21 @@ public class AuthenticationService {
     private final LoginAggregator loginAggregator;
     private final LogoutAggregator logoutAggregator;
     private final RefreshTokenAggregator refreshTokenAggregator;
+    private final EditCredentialAggregator editCredentialAggregator;
 
     public AuthenticationService(
             RabbitCommandPublisher publisher,
             RegistrationAggregator registrationAggregator,
             LoginAggregator loginAggregator,
             LogoutAggregator logoutAggregator,
-            RefreshTokenAggregator refreshTokenAggregator
-    ) {
+            RefreshTokenAggregator refreshTokenAggregator,
+            EditCredentialAggregator editCredentialAggregator) {
         this.publisher = publisher;
         this.registrationAggregator = registrationAggregator;
         this.loginAggregator = loginAggregator;
         this.logoutAggregator = logoutAggregator;
         this.refreshTokenAggregator = refreshTokenAggregator;
+        this.editCredentialAggregator = editCredentialAggregator;
     }
 
     public ApiResponse<Void> register(RegisterUserRequest request) {
@@ -133,12 +132,38 @@ public class AuthenticationService {
         var future = logoutAggregator.createLogout(correlationId);
 
         publisher.sendLogoutRequest(
-                new UserLogoutCommand(
+                new UserUuidBasicCommand(
                         userUuid
                 ),
                 correlationId
         );
 
         return getVoidApiResponse(future);
+    }
+
+    public ApiResponse<Void> editCredential(String email, String password, UUID userUuid) {
+
+        String correlationId = UUID.randomUUID().toString();
+
+        CompletableFuture<ApiResponse<Void>> future =
+                editCredentialAggregator.editCredential(correlationId);
+
+        publisher.sendEditCredentialRequest(
+                new UserEditCredentialCommand(userUuid, email, password),
+                correlationId
+        );
+
+        try {
+            return future.get(5, TimeUnit.SECONDS);
+        } catch (Exception e) {
+
+            future.cancel(true);
+
+            ApiResponse<Void> response = new ApiResponse<>();
+            response.setSuccess(false);
+            response.setMessage("TIMEOUT_OR_ERROR");
+            response.setData(null);
+            return response;
+        }
     }
 }

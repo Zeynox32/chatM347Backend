@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class RegistrationState {
+public class AuthAndUserServiceState {
     private BasicRabbitMqResultEvent auth;
     private BasicRabbitMqResultEvent user;
 }

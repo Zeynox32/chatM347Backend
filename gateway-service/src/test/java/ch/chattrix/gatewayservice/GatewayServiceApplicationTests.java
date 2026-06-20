@@ -8,7 +8,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 
-@SpringBootTest
+@SpringBootTest(
+		properties = {
+				"FRONTEND_URL=http://localhost:5173"
+		}
+)
 @ActiveProfiles("test")
 class GatewayServiceApplicationTests {
 

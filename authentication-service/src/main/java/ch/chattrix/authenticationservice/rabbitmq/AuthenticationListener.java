@@ -1,11 +1,9 @@
 package ch.chattrix.authenticationservice.rabbitmq;
 
 import ch.chattrix.authenticationservice.service.AuthenticationService;
-import ch.chattrix.shared.command.UserCredentialRegisterCommand;
-import ch.chattrix.shared.command.UserLoginCommand;
-import ch.chattrix.shared.command.UserLogoutCommand;
-import ch.chattrix.shared.command.UserRefreshTokenCommand;
+import ch.chattrix.shared.command.*;
 import ch.chattrix.shared.event.BasicRabbitMqResultEvent;
+import ch.chattrix.shared.event.GetOneUserEmailDataResultEvent;
 import ch.chattrix.shared.event.LoginResultEvent;
 import ch.chattrix.shared.event.RefreshTokenResultEvent;
 import ch.chattrix.shared.rabbitmq.Exchanges;
@@ -206,8 +204,8 @@ public class AuthenticationListener {
         if (correlationId == null) return;
 
         try {
-            UserLogoutCommand command =
-                    objectMapper.readValue(message.getBody(), UserLogoutCommand.class);
+            UserUuidBasicCommand command =
+                    objectMapper.readValue(message.getBody(), UserUuidBasicCommand.class);
 
             ApiResponse<Void> serviceResponse =
                     authService.logout(command.getUserUuid());
@@ -239,6 +237,165 @@ public class AuthenticationListener {
             rabbitTemplate.convertAndSend(
                     Exchanges.AUTHENTICATION_RESPONSE,
                     RoutingKeys.AUTH_RESULT_LOGOUT,
+                    result,
+                    msg -> {
+                        msg.getMessageProperties().setCorrelationId(correlationId);
+                        return msg;
+                    }
+            );
+        }
+    }
+
+    @RabbitListener(queues = Queues.AUTH_GET_EMAIL_QUEUE)
+    public void handleGetEmail(Message message) {
+
+        String correlationId = message.getMessageProperties().getCorrelationId();
+        if (correlationId == null) return;
+
+        try {
+            UserUuidBasicCommand command =
+                    objectMapper.readValue(message.getBody(), UserUuidBasicCommand.class);
+
+            ApiResponse<String> serviceResponse =
+                    authService.getEmailByUserUuid(command.getUserUuid());
+
+            GetOneUserEmailDataResultEvent result =
+                    new GetOneUserEmailDataResultEvent();
+
+            result.setSuccess(serviceResponse.isSuccess());
+            result.setErrorMessage(
+                    serviceResponse.isSuccess() ? null : serviceResponse.getMessage()
+            );
+
+            if (serviceResponse.isSuccess() && serviceResponse.getData() != null) {
+                result.setEmail(serviceResponse.getData());
+            }
+
+            rabbitTemplate.convertAndSend(
+                    Exchanges.AUTHENTICATION_RESPONSE,
+                    RoutingKeys.AUTH_RESULT_GET_EMAIL,
+                    result,
+                    msg -> {
+                        msg.getMessageProperties().setCorrelationId(correlationId);
+                        return msg;
+                    }
+            );
+
+        } catch (Exception e) {
+
+            GetOneUserEmailDataResultEvent result =
+                    new GetOneUserEmailDataResultEvent();
+
+            result.setSuccess(false);
+            result.setErrorMessage(e.getMessage() != null ? e.getMessage() : "UNKNOWN_ERROR");
+
+            rabbitTemplate.convertAndSend(
+                    Exchanges.AUTHENTICATION_RESPONSE,
+                    RoutingKeys.AUTH_RESULT_GET_EMAIL,
+                    result,
+                    msg -> {
+                        msg.getMessageProperties().setCorrelationId(correlationId);
+                        return msg;
+                    }
+            );
+        }
+    }
+
+    @RabbitListener(queues = Queues.AUTH_EDIT_CREDENTIAL_QUEUE)
+    public void handleEditCredential(Message message) {
+
+        String correlationId = message.getMessageProperties().getCorrelationId();
+        if (correlationId == null) return;
+
+        try {
+            UserEditCredentialCommand command =
+                    objectMapper.readValue(message.getBody(), UserEditCredentialCommand.class);
+
+            ApiResponse<Void> serviceResponse =
+                    authService.editCredential(command.getUserUuid(), command.getEmail(), command.getPassword());
+
+            BasicRabbitMqResultEvent result = new BasicRabbitMqResultEvent();
+            result.setSuccess(serviceResponse.isSuccess());
+            result.setErrorMessage(
+                    serviceResponse.isSuccess()
+                            ? null
+                            : serviceResponse.getMessage()
+            );
+
+            rabbitTemplate.convertAndSend(
+                    Exchanges.AUTHENTICATION_RESPONSE,
+                    RoutingKeys.AUTH_RESULT_EDIT_CREDENTIAL,
+                    result,
+                    msg -> {
+                        msg.getMessageProperties().setCorrelationId(correlationId);
+                        return msg;
+                    }
+            );
+
+        } catch (Exception e) {
+
+            BasicRabbitMqResultEvent result = new BasicRabbitMqResultEvent();
+            result.setSuccess(false);
+            result.setErrorMessage(e.getMessage());
+
+            rabbitTemplate.convertAndSend(
+                    Exchanges.AUTHENTICATION_RESPONSE,
+                    RoutingKeys.AUTH_RESULT_EDIT_CREDENTIAL,
+                    result,
+                    msg -> {
+                        msg.getMessageProperties().setCorrelationId(correlationId);
+                        return msg;
+                    }
+            );
+        }
+    }
+
+    @RabbitListener(queues = Queues.AUTH_DELETE_QUEUE)
+    public void handleDelete(Message message) {
+
+        String correlationId = message.getMessageProperties().getCorrelationId();
+        if (correlationId == null) return;
+
+        try {
+            UserUuidBasicCommand command =
+                    objectMapper.readValue(message.getBody(), UserUuidBasicCommand.class);
+
+            ApiResponse<Void> serviceResponse =
+                    authService.delete(
+                            command.getUserUuid()
+                    );
+
+            BasicRabbitMqResultEvent result = new BasicRabbitMqResultEvent();
+            result.setSuccess(serviceResponse.isSuccess());
+            result.setErrorMessage(
+                    serviceResponse.isSuccess()
+                            ? null
+                            : serviceResponse.getMessage()
+            );
+
+            rabbitTemplate.convertAndSend(
+                    Exchanges.AUTHENTICATION_RESPONSE,
+                    RoutingKeys.AUTH_RESULT_DELETE,
+                    result,
+                    msg -> {
+                        msg.getMessageProperties().setCorrelationId(correlationId);
+                        return msg;
+                    }
+            );
+
+        } catch (Exception e) {
+
+            BasicRabbitMqResultEvent result = new BasicRabbitMqResultEvent();
+            result.setSuccess(false);
+            result.setErrorMessage(
+                    e.getMessage() != null
+                            ? e.getMessage()
+                            : "UNKNOWN_ERROR"
+            );
+
+            rabbitTemplate.convertAndSend(
+                    Exchanges.AUTHENTICATION_RESPONSE,
+                    RoutingKeys.AUTH_RESULT_DELETE,
                     result,
                     msg -> {
                         msg.getMessageProperties().setCorrelationId(correlationId);

@@ -44,7 +44,7 @@ public class AuthenticationService {
         if (userCredentialRepository.findByEmail(email).isPresent()) {
             return new ApiResponse<>(false, "EMAIL_ALREADY_IN_USE", null);
         }
-        if (userCredentialRepository.findById(userUuid).isPresent()) {
+        if (userCredentialRepository.findByUserUuid(userUuid).isPresent()) {
             return new ApiResponse<>(false, "USER_ALREADY_EXISTS", null);
         }
 
@@ -139,13 +139,92 @@ public class AuthenticationService {
     @Transactional
     public ApiResponse<Void> logout(UUID userUuid) {
 
-        RefreshToken refreshToken = refreshTokenRepository.findByUserUuid(userUuid);
+        Optional<RefreshToken> refreshToken = refreshTokenRepository.findByUserUuid(userUuid);
 
-        if (refreshToken == null) {
+        if (refreshToken.isEmpty()) {
             return new ApiResponse<>(false, "NO_REFRESH_TOKEN_FOUND", null);
         }
         refreshTokenRepository.deleteByUserUuid(userUuid);
 
         return new ApiResponse<>(true, "LOGOUT_SUCCESS", null);
+    }
+
+    public ApiResponse<String> getEmailByUserUuid(UUID userUuid) {
+
+        try {
+            Optional<UserCredential> user =
+                    userCredentialRepository.findByUserUuid(userUuid);
+
+            return user.map(userCredential -> new ApiResponse<>(
+                    true,
+                    "EMAIL_LOOKUP_SUCCESS",
+                    userCredential.getEmail()
+            )).orElseGet(() -> new ApiResponse<>(false, "USER_NOT_FOUND", null));
+
+        } catch (Exception e) {
+            return new ApiResponse<>(
+                    false,
+                    "EMAIL_LOOKUP_FAILED",
+                    null
+            );
+        }
+    }
+
+    @Transactional
+    public ApiResponse<Void> editCredential(UUID userUuid, String email, String password) {
+
+        UserCredential userCredential = userCredentialRepository.findByUserUuid(userUuid)
+                .orElse(null);
+
+        if (userCredential == null) {
+            return new ApiResponse<>(false, "NO_CREDENTIAL_FOUND", null);
+        }
+
+        if ((email == null || email.isBlank()) &&
+                (password == null || password.isBlank())) {
+            return new ApiResponse<>(false, "NO_CREDENTIAL_TO_EDIT_FOUND", null);
+        }
+
+        if (email != null && !email.isBlank() &&
+                userCredentialRepository.findByEmail(email)
+                        .filter(u -> !u.getUserUuid().equals(userUuid))
+                        .isPresent()) {
+            return new ApiResponse<>(false, "EMAIL_ALREADY_EXISTS", null);
+        }
+
+        if (email != null && !email.isBlank()) {
+            userCredential.setEmail(email);
+        }
+
+        if (password != null && !password.isBlank()) {
+            userCredential.setPasswordHash(hashPassword(password));
+        }
+
+        userCredential.setUpdatedAt(Date.from(Instant.now()));
+
+        return new ApiResponse<>(true, "EDIT_CREDENTIAL_SUCCESS", null);
+    }
+
+    public ApiResponse<Void> delete(UUID userUuid) {
+
+        boolean credentialExists = userCredentialRepository.findByUserUuid(userUuid).isPresent();
+        boolean refreshTokenExists = refreshTokenRepository.findByUserUuid(userUuid).isPresent();
+
+        if (!credentialExists && !refreshTokenExists) {
+            return new ApiResponse<>(false, "NOTHING_TO_DELETE", null);
+        }
+
+        try {
+            userCredentialRepository.findByUserUuid(userUuid)
+                    .ifPresent(userCredentialRepository::delete);
+
+            refreshTokenRepository.findByUserUuid(userUuid)
+                    .ifPresent(refreshTokenRepository::delete);
+
+            return new ApiResponse<>(true, "DELETE_SUCCESS", null);
+
+        } catch (Exception e) {
+            return new ApiResponse<>(false, "DELETE_FAILED", null);
+        }
     }
 }
