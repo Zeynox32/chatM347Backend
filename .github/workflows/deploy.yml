@@ -15,11 +15,16 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       sha_tag: ${{ steps.tag.outputs.sha_tag }}
+      owner_lower: ${{ steps.owner.outputs.owner_lower }}
     steps:
       - uses: actions/checkout@v4
       - name: Set SHA tag
         id: tag
         run: echo "sha_tag=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Compute lowercase owner (GHCR/Docker erfordert lowercase Image-Namen)
+        id: owner
+        run: echo "owner_lower=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
 
   # ── 2. Build & Push aller Backend-Services ──────────────────────────────────
   # WICHTIG: Multi-Module Maven Projekt -> Build-Context ist IMMER das Repo-Root (.),
@@ -58,7 +63,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/${{ github.repository_owner }}/chattrix-${{ matrix.service }}
+          images: ${{ env.REGISTRY }}/${{ needs.prepare.outputs.owner_lower }}/chattrix-${{ matrix.service }}
           tags: |
             type=raw,value=${{ needs.prepare.outputs.sha_tag }}
             type=raw,value=latest
@@ -137,6 +142,11 @@ jobs:
           chmod 600 ~/.ssh/id_ed25519
           ssh-keyscan -H ${{ env.VM_IP }} >> ~/.ssh/known_hosts
 
+      - name: Ensure /opt/chattrix exists with correct permissions
+        run: |
+          ssh -i ~/.ssh/id_ed25519 deploy@${{ env.VM_IP }} \
+            "sudo mkdir -p /opt/chattrix && sudo chown -R deploy:deploy /opt/chattrix && sudo chmod -R 755 /opt/chattrix"
+
       - name: Copy docker-compose files to VM
         run: |
           scp -i ~/.ssh/id_ed25519 -r ./docker-compose-files/* deploy@${{ env.VM_IP }}:/opt/chattrix/
@@ -144,7 +154,7 @@ jobs:
       - name: Write .env on VM
         run: |
           ssh -i ~/.ssh/id_ed25519 deploy@${{ env.VM_IP }} "cat > /opt/chattrix/.env" << EOF
-          GHCR_OWNER=${{ github.repository_owner }}
+          GHCR_OWNER=${{ needs.prepare.outputs.owner_lower }}
           IMAGE_TAG_AUTHENTICATION=${{ env.SHA_TAG }}
           IMAGE_TAG_USER=${{ env.SHA_TAG }}
           IMAGE_TAG_CHAT=${{ env.SHA_TAG }}
