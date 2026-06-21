@@ -1,6 +1,5 @@
 package ch.chattrix.shared.redis.event;
 
-import ch.chattrix.shared.enums.ChatType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

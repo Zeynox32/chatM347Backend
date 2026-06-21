@@ -1,6 +1,9 @@
 package ch.chattrix.gatewayservice.service;
 
-import ch.chattrix.gatewayservice.aggregator.*;
+import ch.chattrix.gatewayservice.aggregator.DeleteUserAggregator;
+import ch.chattrix.gatewayservice.aggregator.EditUsernameAggregator;
+import ch.chattrix.gatewayservice.aggregator.GetAllUsersAggregator;
+import ch.chattrix.gatewayservice.aggregator.GetOneUserAggregator;
 import ch.chattrix.gatewayservice.rabbitmq.RabbitCommandPublisher;
 import ch.chattrix.shared.rabbitmq.command.EmptyBasicCommand;
 import ch.chattrix.shared.rabbitmq.command.UserEditUsernameCommand;
