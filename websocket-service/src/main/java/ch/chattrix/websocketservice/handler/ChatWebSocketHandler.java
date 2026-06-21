@@ -2,8 +2,9 @@ package ch.chattrix.websocketservice.handler;
 
 import ch.chattrix.shared.enums.ChatType;
 import ch.chattrix.shared.redis.event.ChatCreateEvent;
-import ch.chattrix.websocketservice.redis.ChatCreatedListener;
+import ch.chattrix.shared.redis.event.GetChatsEvent;
 import ch.chattrix.websocketservice.redis.ChatMessagePublisher;
+import ch.chattrix.websocketservice.registry.WebSocketSessionRegistry;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -22,16 +23,26 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 
     private final ObjectMapper objectMapper;
     private final ChatMessagePublisher publisher;
-    private final ChatCreatedListener chatCreatedListener;
+    private final WebSocketSessionRegistry sessionRegistry;
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
-        chatCreatedListener.register(session);
+
+        UUID userUuid = (UUID) session.getAttributes().get("userUuid");
+
+        if (userUuid != null) {
+            sessionRegistry.register(userUuid, session);
+        }
     }
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
-        chatCreatedListener.remove(session);
+
+        UUID userUuid = (UUID) session.getAttributes().get("userUuid");
+
+        if (userUuid != null) {
+            sessionRegistry.remove(userUuid);
+        }
     }
 
     @Override
@@ -44,10 +55,6 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
         if ("CREATE_CHAT".equals(eventType)) {
 
             UUID creatorUuid = (UUID) session.getAttributes().get("userUuid");
-
-            if (creatorUuid == null) {
-                throw new IllegalStateException("User not authenticated in WebSocket session");
-            }
 
             List<UUID> memberUuids = objectMapper.convertValue(
                     node.get("memberUuids"),
@@ -68,6 +75,18 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
                     .build();
 
             publisher.createChat(event);
+        }
+
+        if ("GET_CHATS".equals(eventType)) {
+
+            UUID userUuid = (UUID) session.getAttributes().get("userUuid");
+
+            GetChatsEvent event = GetChatsEvent.builder()
+                    .userUuid(userUuid)
+                    .timestamp(System.currentTimeMillis())
+                    .build();
+
+            publisher.getChats(event);
         }
     }
 }

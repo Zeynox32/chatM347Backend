@@ -1,6 +1,6 @@
 package ch.chattrix.shared.redis.event;
 
-import ch.chattrix.shared.enums.ChatType;
+import ch.chattrix.shared.dto.ChatDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,10 +13,8 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ChatCreateEvent {
-    private String name;
-    private ChatType chatType;
-    private UUID creatorUuid;
-    private List<UUID> memberUuids;
-    private long timestamp;
+public class ReceivedChatsEvent {
+
+    private UUID userUuid;
+    private List<ChatDto> chats;
 }

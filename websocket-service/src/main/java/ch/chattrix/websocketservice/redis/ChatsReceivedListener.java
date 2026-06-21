@@ -1,6 +1,6 @@
 package ch.chattrix.websocketservice.redis;
 
-import ch.chattrix.shared.redis.event.ChatCreatedEvent;
+import ch.chattrix.shared.redis.event.ReceivedChatsEvent;
 import ch.chattrix.websocketservice.registry.WebSocketSessionRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -10,11 +10,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
-import java.util.UUID;
-
 @Component
 @RequiredArgsConstructor
-public class ChatCreatedListener implements MessageListener {
+public class ChatsReceivedListener implements MessageListener {
 
     private final ObjectMapper objectMapper;
     private final WebSocketSessionRegistry sessionRegistry;
@@ -22,25 +20,23 @@ public class ChatCreatedListener implements MessageListener {
     @Override
     public void onMessage(Message message, byte[] pattern) {
         try {
-            ChatCreatedEvent event =
-                    objectMapper.readValue(message.getBody(), ChatCreatedEvent.class);
+            ReceivedChatsEvent event =
+                    objectMapper.readValue(message.getBody(), ReceivedChatsEvent.class);
 
-            if (event.getChatDto() == null ||
-                    event.getChatDto().getMemberUuids() == null) {
+            if (event.getUserUuid() == null) {
                 return;
             }
 
-            String payload = objectMapper.writeValueAsString(event);
+            WebSocketSession session =
+                    sessionRegistry.get(event.getUserUuid());
 
-            for (UUID userUuid : event.getChatDto().getMemberUuids()) {
-
-                WebSocketSession session =
-                        sessionRegistry.get(userUuid);
-
-                if (session != null && session.isOpen()) {
-                    session.sendMessage(new TextMessage(payload));
-                }
+            if (session == null || !session.isOpen()) {
+                return;
             }
+
+            session.sendMessage(
+                    new TextMessage(objectMapper.writeValueAsString(event))
+            );
 
         } catch (Exception e) {
             throw new RuntimeException(e);

@@ -1,12 +1,11 @@
-package ch.chattrix.chatservice.config;
+package ch.chattrix.websocketservice.config;
 
-import ch.chattrix.chatservice.redis.ChatCreateListener;
-import ch.chattrix.chatservice.redis.GetChatsListener;
 import ch.chattrix.shared.redis.channel.RedisChannels;
+import ch.chattrix.websocketservice.redis.ChatCreatedListener;
+import ch.chattrix.websocketservice.redis.ChatsReceivedListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 
@@ -14,18 +13,8 @@ import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 public class RedisConfig {
 
     @Bean
-    public ChannelTopic chatCreateTopic() {
-        return new ChannelTopic(RedisChannels.CHAT_CREATE);
-    }
-
-    @Bean
     public ChannelTopic chatCreatedTopic() {
         return new ChannelTopic(RedisChannels.CHAT_CREATED);
-    }
-
-    @Bean
-    public ChannelTopic chatsGetTopic() {
-        return new ChannelTopic(RedisChannels.CHATS_GET);
     }
 
     @Bean
@@ -34,28 +23,22 @@ public class RedisConfig {
     }
 
     @Bean
-    public StringRedisTemplate stringRedisTemplate(RedisConnectionFactory factory) {
-        return new StringRedisTemplate(factory);
-    }
-
-    @Bean
     public RedisMessageListenerContainer redisContainer(
             RedisConnectionFactory factory,
-            ChatCreateListener chatCreateListener,
-            GetChatsListener getChatsListener
+            ChatCreatedListener chatCreatedListener,
+            ChatsReceivedListener chatsReceivedListener
     ) {
-
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(factory);
 
         container.addMessageListener(
-                chatCreateListener,
-                chatCreateTopic()
+                chatCreatedListener,
+                chatCreatedTopic()
         );
 
         container.addMessageListener(
-                getChatsListener,
-                chatsGetTopic()
+                chatsReceivedListener,
+                chatsReceivedTopic()
         );
 
         return container;
