@@ -31,6 +31,7 @@ public class DeleteChatListener implements MessageListener {
                     objectMapper.readValue(body, ChatDeleteEvent.class);
 
             UUID chatUuid = event.getChatUuid();
+            UUID userUuid = event.getUserUuid();
 
             Optional<Chat> optionalChat = chatRepository.findByChatUuid(chatUuid);
 
@@ -39,6 +40,11 @@ public class DeleteChatListener implements MessageListener {
             }
 
             Chat chat = optionalChat.get();
+
+            if (chat.getMemberUuids() == null ||
+                    !chat.getMemberUuids().contains(userUuid)) {
+                return;
+            }
 
             chatRepository.delete(chat);
 

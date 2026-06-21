@@ -14,5 +14,6 @@ import java.util.UUID;
 @AllArgsConstructor
 public class ChatDeleteEvent {
     private UUID chatUuid;
+    private UUID userUuid;
     private List<UUID> memberUuids;
 }

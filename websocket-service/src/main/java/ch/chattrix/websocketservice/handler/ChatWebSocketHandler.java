@@ -102,12 +102,15 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
         }
 
         if ("EDIT_CHAT".equals(eventType)) {
+            UUID userUuid = (UUID) session.getAttributes().get("userUuid");
+
             List<UUID> memberUuids = objectMapper.convertValue(
                     node.get("memberUuids"),
                     objectMapper.getTypeFactory()
                             .constructCollectionType(List.class, UUID.class)
             );
             ChatEditEvent event = ChatEditEvent.builder()
+                    .userUuid(userUuid)
                     .chatUuid(UUID.fromString(node.get("chatUuid").asText()))
                     .memberUuids(memberUuids)
                     .name(node.get("name").asText())
@@ -117,6 +120,7 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
         }
 
         if ("DELETE_CHAT".equals(eventType)) {
+            UUID userUuid = (UUID) session.getAttributes().get("userUuid");
             List<UUID> memberUuids = objectMapper.convertValue(
                     node.get("memberUuids"),
                     objectMapper.getTypeFactory()
@@ -124,6 +128,7 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
             );
             ChatDeleteEvent event = ChatDeleteEvent.builder()
                     .chatUuid(UUID.fromString(node.get("chatUuid").asText()))
+                    .userUuid(userUuid)
                     .memberUuids(memberUuids)
                     .build();
 

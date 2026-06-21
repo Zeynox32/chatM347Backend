@@ -14,6 +14,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChatEditEvent {
+    private UUID userUuid;
     private UUID chatUuid;
     private String name;
     private List<UUID> memberUuids;

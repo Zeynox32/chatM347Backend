@@ -33,6 +33,7 @@ public class EditChatListener implements MessageListener {
                     objectMapper.readValue(body, ChatEditEvent.class);
 
             UUID chatUuid = event.getChatUuid();
+            UUID userUuid = event.getUserUuid();
 
             Optional<Chat> optionalChat = chatRepository.findByChatUuid(chatUuid);
 
@@ -41,6 +42,11 @@ public class EditChatListener implements MessageListener {
             }
 
             Chat chat = optionalChat.get();
+
+            if (chat.getMemberUuids() == null ||
+                    !chat.getMemberUuids().contains(userUuid)) {
+                return;
+            }
 
             if (event.getName() != null) {
                 chat.setName(event.getName());

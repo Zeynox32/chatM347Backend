@@ -14,6 +14,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
@@ -31,6 +32,8 @@ public class GetChatListener implements MessageListener {
             ChatGetEvent event =
                     objectMapper.readValue(body, ChatGetEvent.class);
 
+            UUID userUuid = event.getUserUuid();
+
             Optional<Chat> chatOpt =
                     chatRepository.findByChatUuid(event.getChatUuid());
 
@@ -39,6 +42,11 @@ public class GetChatListener implements MessageListener {
             }
 
             Chat chat = chatOpt.get();
+
+            if (chat.getMemberUuids() == null ||
+                    !chat.getMemberUuids().contains(userUuid)) {
+                return;
+            }
 
             ChatDto chatDto = new ChatDto();
             chatDto.setChatUuid(chat.getChatUuid());
@@ -49,7 +57,7 @@ public class GetChatListener implements MessageListener {
             chatDto.setCreatedAt(chat.getCreatedAt());
 
             ChatReceivedEvent response = ChatReceivedEvent.builder()
-                    .userUuid(event.getUserUuid())
+                    .userUuid(userUuid)
                     .chat(chatDto)
                     .build();
 
