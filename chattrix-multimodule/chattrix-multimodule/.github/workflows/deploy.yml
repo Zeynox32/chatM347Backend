@@ -1,0 +1,176 @@
+name: Build → Push → Deploy (GCP VM)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  # ── 1. Prepare ────────────────────────────────────────────────────────────────
+  prepare:
+    name: Prepare
+    runs-on: ubuntu-latest
+    outputs:
+      sha_tag: ${{ steps.tag.outputs.sha_tag }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set SHA tag
+        id: tag
+        run: echo "sha_tag=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+  # ── 2. Build & Push aller Backend-Services ──────────────────────────────────
+  # WICHTIG: Multi-Module Maven Projekt -> Build-Context ist IMMER das Repo-Root (.),
+  # nicht der einzelne Service-Ordner! Sonst findet Maven die Parent-pom.xml nicht.
+  build-and-push:
+    name: Build & Push – ${{ matrix.service }}
+    runs-on: ubuntu-latest
+    needs: prepare
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      fail-fast: false
+      matrix:
+        service:
+          - authentication-service
+          - user-service
+          - chat-service
+          - websocket-service
+          - gateway-service
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ github.repository_owner }}/chattrix-${{ matrix.service }}
+          tags: |
+            type=raw,value=${{ needs.prepare.outputs.sha_tag }}
+            type=raw,value=latest
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          # Build-Context = Repo-Root, da Multi-Module Maven Projekt
+          context: .
+          file: ./docker/${{ matrix.service }}.Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # ── 3. Terraform – VM-Infrastruktur sicherstellen ───────────────────────────
+  terraform:
+    name: Terraform Apply (GCP VM Infrastruktur)
+    runs-on: ubuntu-latest
+    needs: prepare
+    outputs:
+      vm_ip: ${{ steps.tf_output.outputs.vm_ip }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "~1.8"
+
+      - name: Terraform Init
+        working-directory: ./terraform
+        run: |
+          terraform init \
+            -backend-config="bucket=${{ secrets.GCS_TFSTATE_BUCKET }}" \
+            -backend-config="prefix=chattrix/prod"
+
+      - name: Terraform Apply
+        working-directory: ./terraform
+        run: |
+          terraform apply -auto-approve \
+            -var="project_id=${{ secrets.GCP_PROJECT_ID }}" \
+            -var="ssh_user=deploy" \
+            -var="ssh_public_key=${{ secrets.VM_SSH_PUBLIC_KEY }}"
+
+      - name: Get VM IP
+        id: tf_output
+        working-directory: ./terraform
+        run: echo "vm_ip=$(terraform output -raw vm_external_ip)" >> $GITHUB_OUTPUT
+
+  # ── 4. Deploy via SSH ─────────────────────────────────────────────────────────
+  deploy:
+    name: Deploy to VM via SSH
+    runs-on: ubuntu-latest
+    needs: [prepare, build-and-push, terraform]
+    environment: prod
+
+    env:
+      VM_IP: ${{ needs.terraform.outputs.vm_ip }}
+      SHA_TAG: ${{ needs.prepare.outputs.sha_tag }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.VM_SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H ${{ env.VM_IP }} >> ~/.ssh/known_hosts
+
+      - name: Copy docker-compose files to VM
+        run: |
+          scp -i ~/.ssh/id_ed25519 -r ./docker-compose-files/* deploy@${{ env.VM_IP }}:/opt/chattrix/
+
+      - name: Write .env on VM
+        run: |
+          ssh -i ~/.ssh/id_ed25519 deploy@${{ env.VM_IP }} "cat > /opt/chattrix/.env" << EOF
+          GHCR_OWNER=${{ github.repository_owner }}
+          IMAGE_TAG_AUTHENTICATION=${{ env.SHA_TAG }}
+          IMAGE_TAG_USER=${{ env.SHA_TAG }}
+          IMAGE_TAG_CHAT=${{ env.SHA_TAG }}
+          IMAGE_TAG_WEBSOCKET=${{ env.SHA_TAG }}
+          IMAGE_TAG_GATEWAY=${{ env.SHA_TAG }}
+          IMAGE_TAG_FRONTEND=${{ secrets.CURRENT_FRONTEND_TAG }}
+          MARIADB_ROOT_PASSWORD=${{ secrets.MARIADB_ROOT_PASSWORD }}
+          MONGO_ROOT_USERNAME=${{ secrets.MONGO_ROOT_USERNAME }}
+          MONGO_ROOT_PASSWORD=${{ secrets.MONGO_ROOT_PASSWORD }}
+          REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}
+          RABBITMQ_USER=${{ secrets.RABBITMQ_USER }}
+          RABBITMQ_PASSWORD=${{ secrets.RABBITMQ_PASSWORD }}
+          JWT_SECRET=${{ secrets.JWT_SECRET }}
+          JWT_EXPIRES_IN=15m
+          DOMAIN=${{ secrets.DOMAIN }}
+          PUBLIC_URL=${{ secrets.PUBLIC_URL }}
+          PUBLIC_WS_URL=${{ secrets.PUBLIC_WS_URL }}
+          EOF
+
+      - name: Log in to GHCR on VM & deploy
+        run: |
+          ssh -i ~/.ssh/id_ed25519 deploy@${{ env.VM_IP }} \
+            "echo '${{ secrets.GITHUB_TOKEN }}' | sudo docker login ghcr.io -u ${{ github.actor }} --password-stdin && \
+             cd /opt/chattrix && \
+             sudo docker compose pull && \
+             sudo docker compose up -d --remove-orphans && \
+             sudo docker image prune -f"
+
+      - name: Health check
+        run: |
+          sleep 15
+          curl -f http://${{ env.VM_IP }}/api/health || echo "Health check fehlgeschlagen – bitte Logs prüfen"
