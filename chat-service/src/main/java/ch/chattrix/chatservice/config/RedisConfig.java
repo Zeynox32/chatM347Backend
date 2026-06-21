@@ -1,9 +1,6 @@
 package ch.chattrix.chatservice.config;
 
-import ch.chattrix.chatservice.redis.ChatCreateListener;
-import ch.chattrix.chatservice.redis.EditChatListener;
-import ch.chattrix.chatservice.redis.GetChatListener;
-import ch.chattrix.chatservice.redis.GetChatsListener;
+import ch.chattrix.chatservice.redis.*;
 import ch.chattrix.shared.redis.channel.RedisChannels;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -56,6 +53,16 @@ public class RedisConfig {
     }
 
     @Bean
+    public ChannelTopic chatDeleteTopic() {
+        return new ChannelTopic(RedisChannels.CHAT_DELETE);
+    }
+
+    @Bean
+    public ChannelTopic chatDeletedTopic() {
+        return new ChannelTopic(RedisChannels.CHAT_DELETED);
+    }
+
+    @Bean
     public StringRedisTemplate stringRedisTemplate(RedisConnectionFactory factory) {
         return new StringRedisTemplate(factory);
     }
@@ -66,7 +73,8 @@ public class RedisConfig {
             ChatCreateListener chatCreateListener,
             GetChatsListener getChatsListener,
             GetChatListener getChatListener,
-            EditChatListener editChatListener
+            EditChatListener editChatListener,
+            DeleteChatListener deleteChatListener
     ) {
 
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
@@ -90,6 +98,11 @@ public class RedisConfig {
         container.addMessageListener(
                 editChatListener,
                 chatEditTopic()
+        );
+
+        container.addMessageListener(
+                deleteChatListener,
+                chatDeleteTopic()
         );
 
         return container;

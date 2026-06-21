@@ -9,4 +9,6 @@ public class RedisChannels {
     public static final String CHAT_RECEIVED = "chat.received";
     public static final String CHAT_EDIT = "chat.edit";
     public static final String CHAT_EDITED = "chat.edited";
+    public static final String CHAT_DELETE = "chat.delete";
+    public static final String CHAT_DELETED = "chat.deleted";
 }
