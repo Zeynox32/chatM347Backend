@@ -14,5 +14,4 @@ import java.util.UUID;
 public class ChatGetEvent {
     private UUID userUuid;
     private UUID chatUuid;
-    private long timestamp;
 }

@@ -72,7 +72,6 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
                     .chatType(ChatType.valueOf(node.get("chatType").asText()))
                     .creatorUuid(creatorUuid)
                     .memberUuids(memberUuids)
-                    .timestamp(System.currentTimeMillis())
                     .build();
 
             publisher.createChat(event);
@@ -84,7 +83,6 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 
             ChatsGetEvent event = ChatsGetEvent.builder()
                     .userUuid(userUuid)
-                    .timestamp(System.currentTimeMillis())
                     .build();
 
             publisher.getChats(event);
@@ -97,7 +95,6 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
             ChatGetEvent event = ChatGetEvent.builder()
                     .userUuid(userUuid)
                     .chatUuid(UUID.fromString(node.get("chatUuid").asText()))
-                    .timestamp(System.currentTimeMillis())
                     .build();
 
             publisher.getChat(event);
@@ -118,7 +115,6 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
                     .chatUuid(UUID.fromString(node.get("chatUuid").asText()))
                     .memberUuids(memberUuids)
                     .name(node.get("name").asText())
-                    .timestamp(System.currentTimeMillis())
                     .build();
 
             publisher.editChat(event);
