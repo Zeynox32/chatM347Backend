@@ -1,6 +1,6 @@
 package ch.chattrix.gatewayservice.aggregator;
 
-import ch.chattrix.shared.event.GetAllUsersResultEvent;
+import ch.chattrix.shared.rabbitmq.event.GetAllUsersResultEvent;
 import ch.chattrix.shared.response.ApiResponse;
 import ch.chattrix.shared.types.UserAnonymData;
 import org.springframework.stereotype.Component;

@@ -1,6 +1,6 @@
 package ch.chattrix.gatewayservice.aggregator;
 
-import ch.chattrix.shared.event.BasicRabbitMqResultEvent;
+import ch.chattrix.shared.rabbitmq.event.BasicRabbitMqResultEvent;
 import ch.chattrix.shared.response.ApiResponse;
 import org.springframework.stereotype.Component;
 

@@ -7,7 +7,6 @@ import ch.chattrix.shared.response.ApiResponse;
 import ch.chattrix.shared.types.LoginData;
 import ch.chattrix.shared.types.RefreshTokenData;
 import ch.chattrix.shared.utils.JwtValidator;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;

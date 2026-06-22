@@ -1,14 +1,14 @@
 package ch.chattrix.authenticationservice.rabbitmq;
 
 import ch.chattrix.authenticationservice.service.AuthenticationService;
-import ch.chattrix.shared.command.*;
-import ch.chattrix.shared.event.BasicRabbitMqResultEvent;
-import ch.chattrix.shared.event.GetOneUserEmailDataResultEvent;
-import ch.chattrix.shared.event.LoginResultEvent;
-import ch.chattrix.shared.event.RefreshTokenResultEvent;
 import ch.chattrix.shared.rabbitmq.Exchanges;
 import ch.chattrix.shared.rabbitmq.Queues;
 import ch.chattrix.shared.rabbitmq.RoutingKeys;
+import ch.chattrix.shared.rabbitmq.command.*;
+import ch.chattrix.shared.rabbitmq.event.BasicRabbitMqResultEvent;
+import ch.chattrix.shared.rabbitmq.event.GetOneUserEmailDataResultEvent;
+import ch.chattrix.shared.rabbitmq.event.LoginResultEvent;
+import ch.chattrix.shared.rabbitmq.event.RefreshTokenResultEvent;
 import ch.chattrix.shared.response.ApiResponse;
 import ch.chattrix.shared.types.LoginData;
 import ch.chattrix.shared.types.RefreshTokenData;

@@ -1,8 +1,8 @@
 package ch.chattrix.gatewayservice.rabbitmq;
 
 import ch.chattrix.gatewayservice.aggregator.*;
-import ch.chattrix.shared.event.*;
 import ch.chattrix.shared.rabbitmq.Queues;
+import ch.chattrix.shared.rabbitmq.event.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;

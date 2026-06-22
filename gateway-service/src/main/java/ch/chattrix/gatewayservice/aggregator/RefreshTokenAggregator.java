@@ -1,6 +1,6 @@
 package ch.chattrix.gatewayservice.aggregator;
 
-import ch.chattrix.shared.event.RefreshTokenResultEvent;
+import ch.chattrix.shared.rabbitmq.event.RefreshTokenResultEvent;
 import ch.chattrix.shared.response.ApiResponse;
 import ch.chattrix.shared.types.RefreshTokenData;
 import org.springframework.stereotype.Component;

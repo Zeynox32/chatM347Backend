@@ -1,7 +1,7 @@
 #!/bin/bash
 
 mongosh <<EOF
-use admin
+use $MONGO_APP_DB
 
 db.createUser({
   user: "$MONGO_APP_USER",

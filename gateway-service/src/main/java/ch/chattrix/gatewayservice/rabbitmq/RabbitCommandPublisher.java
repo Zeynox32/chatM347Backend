@@ -1,8 +1,8 @@
 package ch.chattrix.gatewayservice.rabbitmq;
 
-import ch.chattrix.shared.command.*;
 import ch.chattrix.shared.rabbitmq.Exchanges;
 import ch.chattrix.shared.rabbitmq.RoutingKeys;
+import ch.chattrix.shared.rabbitmq.command.*;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Component;
 

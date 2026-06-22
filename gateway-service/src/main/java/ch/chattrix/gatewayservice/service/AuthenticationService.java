@@ -2,9 +2,9 @@ package ch.chattrix.gatewayservice.service;
 
 import ch.chattrix.gatewayservice.aggregator.*;
 import ch.chattrix.gatewayservice.rabbitmq.RabbitCommandPublisher;
-import ch.chattrix.shared.command.*;
 import ch.chattrix.shared.dto.LoginUserRequest;
 import ch.chattrix.shared.dto.RegisterUserRequest;
+import ch.chattrix.shared.rabbitmq.command.*;
 import ch.chattrix.shared.response.ApiResponse;
 import ch.chattrix.shared.types.LoginData;
 import ch.chattrix.shared.types.RefreshTokenData;

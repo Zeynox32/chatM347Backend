@@ -1,14 +1,14 @@
 package ch.chattrix.userservice.rabbitmq;
 
-import ch.chattrix.shared.command.UserEditUsernameCommand;
-import ch.chattrix.shared.command.UserRegisterCommand;
-import ch.chattrix.shared.command.UserUuidBasicCommand;
-import ch.chattrix.shared.event.BasicRabbitMqResultEvent;
-import ch.chattrix.shared.event.GetAllUsersResultEvent;
-import ch.chattrix.shared.event.GetOneUserBasicDataResultEvent;
 import ch.chattrix.shared.rabbitmq.Exchanges;
 import ch.chattrix.shared.rabbitmq.Queues;
 import ch.chattrix.shared.rabbitmq.RoutingKeys;
+import ch.chattrix.shared.rabbitmq.command.UserEditUsernameCommand;
+import ch.chattrix.shared.rabbitmq.command.UserRegisterCommand;
+import ch.chattrix.shared.rabbitmq.command.UserUuidBasicCommand;
+import ch.chattrix.shared.rabbitmq.event.BasicRabbitMqResultEvent;
+import ch.chattrix.shared.rabbitmq.event.GetAllUsersResultEvent;
+import ch.chattrix.shared.rabbitmq.event.GetOneUserBasicDataResultEvent;
 import ch.chattrix.shared.response.ApiResponse;
 import ch.chattrix.shared.types.UserAnonymData;
 import ch.chattrix.shared.types.UserBaseData;

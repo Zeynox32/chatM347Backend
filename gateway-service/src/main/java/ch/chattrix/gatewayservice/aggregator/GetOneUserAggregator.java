@@ -1,7 +1,7 @@
 package ch.chattrix.gatewayservice.aggregator;
 
-import ch.chattrix.shared.event.GetOneUserBasicDataResultEvent;
-import ch.chattrix.shared.event.GetOneUserEmailDataResultEvent;
+import ch.chattrix.shared.rabbitmq.event.GetOneUserBasicDataResultEvent;
+import ch.chattrix.shared.rabbitmq.event.GetOneUserEmailDataResultEvent;
 import ch.chattrix.shared.response.ApiResponse;
 import ch.chattrix.shared.types.UserData;
 import org.springframework.stereotype.Component;
