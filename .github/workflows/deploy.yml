@@ -180,7 +180,7 @@ jobs:
       - name: Make init scripts executable
         run: |
           ssh -i ~/.ssh/id_ed25519 deploy@${{ env.VM_IP }} \
-            "chmod +x /opt/chattrix/scripts/*.sh"
+            "chmod +x /opt/chattrix/mongodb/*.sh"
 
       - name: Log in to GHCR on VM & deploy
         run: |
