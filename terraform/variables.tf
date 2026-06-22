@@ -6,7 +6,7 @@ variable "project_id" {
 variable "region" {
   description = "GCP Region"
   type        = string
-  default     = "europe-west6" # Zürich – nah an der Schweiz
+  default     = "europe-west6"
 }
 
 variable "zone" {
@@ -22,7 +22,7 @@ variable "environment" {
 }
 
 variable "machine_type" {
-  description = "GCE machine type. e2-medium empfohlen für 6 Microservices + 4 Datenbanken/Broker."
+  description = "GCE machine type."
   type        = string
   default     = "e2-medium"
 }

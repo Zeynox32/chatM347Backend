@@ -5,7 +5,6 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <!-- Spring Boot Parent -->
     <parent>
         <groupId>ch.chattrix</groupId>
         <artifactId>chattrix-backend-microservices</artifactId>
@@ -62,7 +61,6 @@
 
     <build>
         <plugins>
-            <!-- ✅ Spring Boot Maven Plugin mit Main-Class Konfiguration -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
