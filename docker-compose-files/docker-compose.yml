@@ -86,16 +86,20 @@ services:
     container_name: chattrix-authentication-service
     restart: unless-stopped
     environment:
-      NODE_ENV: production
+      SPRING_PROFILES_ACTIVE: prod
       PORT: 3001
-      DB_HOST: mariadb
-      DB_PORT: 3306
-      DB_NAME: authentication_db
-      DB_USER: root
-      DB_PASSWORD: ${MARIADB_ROOT_PASSWORD}
-      RABBITMQ_URL: amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672
+      MARIADB_HOST: mariadb
+      MARIADB_PORT: 3306
+      AUTH_DB: authentication_service
+      AUTH_USER: auth_user
+      AUTH_PASSWORD: auth_password
       JWT_SECRET: ${JWT_SECRET}
-      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-15m}
+      JWT_ACCESS_EXPIRATION: 3600000
+      JWT_REFRESH_EXPIRATION: 1209600000
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: ${RABBITMQ_USER}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
     networks:
       - chattrix-net
     deploy:
@@ -108,14 +112,17 @@ services:
     container_name: chattrix-user-service
     restart: unless-stopped
     environment:
-      NODE_ENV: production
+      SPRING_PROFILES_ACTIVE: prod
       PORT: 3002
-      DB_HOST: mariadb
-      DB_PORT: 3306
-      DB_NAME: user_db
-      DB_USER: root
-      DB_PASSWORD: ${MARIADB_ROOT_PASSWORD}
-      RABBITMQ_URL: amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672
+      MARIADB_HOST: mariadb
+      MARIADB_PORT: 3306
+      USER_DB: user_service
+      USER_USER: user_user
+      USER_PASSWORD: user_password
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: ${RABBITMQ_USER}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
     networks:
       - chattrix-net
     deploy:
@@ -128,14 +135,20 @@ services:
     container_name: chattrix-chat-service
     restart: unless-stopped
     environment:
-      NODE_ENV: production
+      SPRING_PROFILES_ACTIVE: prod
       PORT: 3003
       MONGODB_HOST: mongodb
       MONGODB_PORT: 27017
       MONGODB_DATABASE: ${MONGO_APP_DB}
       MONGO_APP_USER: ${MONGO_APP_USER}
       MONGO_APP_PASSWORD: ${MONGO_APP_PASSWORD}
-      RABBITMQ_URL: amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: ${RABBITMQ_USER}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
     networks:
       - chattrix-net
     deploy:
@@ -148,12 +161,13 @@ services:
     container_name: chattrix-websocket-service
     restart: unless-stopped
     environment:
-      NODE_ENV: production
+      SPRING_PROFILES_ACTIVE: prod
       PORT: 3004
+      FRONTEND_URL: ${PUBLIC_URL}
+      JWT_SECRET: ${JWT_SECRET}
       REDIS_HOST: redis
       REDIS_PORT: 6379
       REDIS_PASSWORD: ${REDIS_PASSWORD}
-      RABBITMQ_URL: amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672
     networks:
       - chattrix-net
     deploy:
@@ -166,13 +180,14 @@ services:
     container_name: chattrix-gateway-service
     restart: unless-stopped
     environment:
-      NODE_ENV: production
+      SPRING_PROFILES_ACTIVE: prod
       PORT: 8080
-      AUTHENTICATION_SERVICE_URL: http://authentication-service:3001
-      USER_SERVICE_URL: http://user-service:3002
-      CHAT_SERVICE_URL: http://chat-service:3003
-      WEBSOCKET_SERVICE_URL: http://websocket-service:3004
-      RABBITMQ_URL: amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672
+      FRONTEND_URL: ${PUBLIC_URL}
+      JWT_SECRET: ${JWT_SECRET}
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: ${RABBITMQ_USER}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
     depends_on:
       - authentication-service
       - user-service
