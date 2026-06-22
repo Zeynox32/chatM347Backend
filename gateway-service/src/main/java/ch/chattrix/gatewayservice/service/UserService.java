@@ -1,10 +1,12 @@
 package ch.chattrix.gatewayservice.service;
 
-import ch.chattrix.gatewayservice.aggregator.*;
+import ch.chattrix.gatewayservice.aggregator.DeleteUserAggregator;
+import ch.chattrix.gatewayservice.aggregator.EditUsernameAggregator;
+import ch.chattrix.gatewayservice.aggregator.GetAllUsersAggregator;
+import ch.chattrix.gatewayservice.aggregator.GetOneUserAggregator;
 import ch.chattrix.gatewayservice.rabbitmq.RabbitCommandPublisher;
 import ch.chattrix.shared.rabbitmq.command.EmptyBasicCommand;
 import ch.chattrix.shared.rabbitmq.command.UserEditUsernameCommand;
-import ch.chattrix.shared.rabbitmq.command.UserUsernamesGetCommand;
 import ch.chattrix.shared.rabbitmq.command.UserUuidBasicCommand;
 import ch.chattrix.shared.response.ApiResponse;
 import ch.chattrix.shared.types.UserAnonymData;
@@ -12,7 +14,6 @@ import ch.chattrix.shared.types.UserData;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;

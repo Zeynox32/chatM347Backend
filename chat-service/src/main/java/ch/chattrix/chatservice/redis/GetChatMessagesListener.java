@@ -1,9 +1,9 @@
 package ch.chattrix.chatservice.redis;
 
 import ch.chattrix.chatservice.model.Chat;
+import ch.chattrix.chatservice.rabbitmq.UsernameClient;
 import ch.chattrix.chatservice.repository.ChatRepository;
 import ch.chattrix.chatservice.repository.MessageRepository;
-import ch.chattrix.chatservice.rabbitmq.UsernameClient;
 import ch.chattrix.shared.dto.ChatResponse;
 import ch.chattrix.shared.dto.MessageResponse;
 import ch.chattrix.shared.redis.channel.RedisChannels;
