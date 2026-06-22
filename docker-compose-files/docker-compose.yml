@@ -48,9 +48,13 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
-      MONGO_INITDB_DATABASE: chat_db
+      MONGO_INITDB_DATABASE: ${MONGO_APP_DB}
+      MONGO_APP_USER: ${MONGO_APP_USER}
+      MONGO_APP_PASSWORD: ${MONGO_APP_PASSWORD}
+      MONGO_APP_DB: ${MONGO_APP_DB}
     volumes:
       - mongodb-data:/data/db
+      - ./mongodb/init.sh:/docker-entrypoint-initdb.d/init-mongodb.sh:ro
     networks:
       - chattrix-net
     deploy:

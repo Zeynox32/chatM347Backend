@@ -1,11 +1,3 @@
-# Dockerfile für authentication-service – Multi-Module Maven Build
-#
-# WICHTIG: Dieses Dockerfile muss mit dem REPO-ROOT als Build-Context gebaut werden,
-# nicht mit dem Service-Unterordner! Sonst findet Maven die Parent-pom.xml nicht.
-#
-# Lokal testen (vom Repo-Root aus):
-#   docker build -f docker/authentication-service.Dockerfile -t test-auth .
-
 # ── Stage 1: Build ─────────────────────────────────────────────────────────────
 FROM maven:3.9-eclipse-temurin-21 AS build
 
@@ -40,19 +32,20 @@ RUN mvn clean package -DskipTests -B -pl authentication-service -am
 
 # 5. WICHTIG: Spring Boot erzeugt neben dem ausführbaren Fat-JAR zusätzlich ein
 #    "*-plain.jar" (nur kompilierter Code, ohne Dependencies, ohne Main-Class).
-#    Dieses hier (noch als root in der Build-Stage) entfernen, damit im nächsten
-#    Schritt garantiert nur das ausführbare JAR übrig bleibt.
-RUN rm -f authentication-service/target/*-plain.jar
+#    Dieses hier entfernen, damit im nächsten Schritt garantiert nur das
+#    ausführbare JAR übrig bleibt.
+RUN rm -f authentication-service/target/*-plain.jar && \
+    ls -lh authentication-service/target/*.jar
 
 # ── Stage 2: Runtime ───────────────────────────────────────────────────────────
 FROM eclipse-temurin:21-jre-alpine
 
 WORKDIR /app
 
+# Non-root User für Sicherheit
 RUN addgroup -S spring && adduser -S spring -G spring
 USER spring:spring
 
-# Jetzt liegt nur noch genau ein JAR im target/-Ordner -> *.jar trifft sicher
 COPY --from=build /build/authentication-service/target/*.jar app.jar
 
 EXPOSE 3001
