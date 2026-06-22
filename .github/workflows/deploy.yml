@@ -164,6 +164,9 @@ jobs:
           MARIADB_ROOT_PASSWORD=${{ secrets.MARIADB_ROOT_PASSWORD }}
           MONGO_ROOT_USERNAME=${{ secrets.MONGO_ROOT_USERNAME }}
           MONGO_ROOT_PASSWORD=${{ secrets.MONGO_ROOT_PASSWORD }}
+          MONGO_APP_USER=${{ secrets.MONGO_APP_USER }}
+          MONGO_APP_PASSWORD=${{ secrets.MONGO_APP_PASSWORD }}
+          MONGO_APP_DB=${{ secrets.MONGO_APP_DB }}
           REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}
           RABBITMQ_USER=${{ secrets.RABBITMQ_USER }}
           RABBITMQ_PASSWORD=${{ secrets.RABBITMQ_PASSWORD }}
@@ -173,6 +176,11 @@ jobs:
           PUBLIC_URL=${{ secrets.PUBLIC_URL }}
           PUBLIC_WS_URL=${{ secrets.PUBLIC_WS_URL }}
           EOF
+
+      - name: Make init scripts executable
+        run: |
+          ssh -i ~/.ssh/id_ed25519 deploy@${{ env.VM_IP }} \
+            "chmod +x /opt/chattrix/scripts/*.sh"
 
       - name: Log in to GHCR on VM & deploy
         run: |
