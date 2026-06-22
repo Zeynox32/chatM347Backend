@@ -13,5 +13,4 @@ import java.util.UUID;
 @AllArgsConstructor
 public class ChatsGetEvent {
     private UUID userUuid;
-    private long timestamp;
 }

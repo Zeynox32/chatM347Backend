@@ -17,5 +17,4 @@ public class ChatEditEvent {
     private UUID chatUuid;
     private String name;
     private List<UUID> memberUuids;
-    private long timestamp;
 }

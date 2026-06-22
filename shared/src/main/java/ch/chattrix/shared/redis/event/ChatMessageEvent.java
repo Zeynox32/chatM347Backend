@@ -17,5 +17,4 @@ public class ChatMessageEvent {
     private UUID senderUuid;
     private String senderUsername;
     private String content;
-    private long timestamp;
 }

@@ -18,5 +18,4 @@ public class ChatCreateEvent {
     private ChatType chatType;
     private UUID creatorUuid;
     private List<UUID> memberUuids;
-    private long timestamp;
 }

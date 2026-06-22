@@ -1,9 +1,5 @@
 name: CI Pipeline
 
-# Reine Build/Test-Validierung bei jedem Push & PR – baut nur die Services,
-# deren Code sich geändert hat. Pusht NICHTS und deployed NICHTS – das
-# übernimmt der separate "Build → Push → Deploy" Workflow (deploy.yml).
-
 on:
   push:
     branches: [main]

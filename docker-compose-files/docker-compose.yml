@@ -13,7 +13,6 @@ volumes:
   caddy-config:
 
 services:
-  # ── Infrastruktur ─────────────────────────────────────────────────────────
 
   mariadb:
     image: mariadb:10.11
@@ -81,8 +80,6 @@ services:
       resources:
         limits:
           memory: 350m
-
-  # ── Microservices ─────────────────────────────────────────────────────────
 
   authentication-service:
     image: ghcr.io/${GHCR_OWNER}/chattrix-authentication-service:${IMAGE_TAG_AUTHENTICATION:-latest}
@@ -200,7 +197,6 @@ services:
         limits:
           memory: 200m
 
-  # ── Reverse Proxy + automatisches SSL ────────────────────────────────────────
   caddy:
     image: caddy:2-alpine
     container_name: chattrix-caddy

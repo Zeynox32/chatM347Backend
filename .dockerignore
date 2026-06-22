@@ -1,6 +1,3 @@
-# Wird angewendet, da der Docker Build-Context jetzt das Repo-Root ist
-# (Multi-Module Maven Projekt)
-
 # Build-Outputs aller Module
 */target/
 **/target/
