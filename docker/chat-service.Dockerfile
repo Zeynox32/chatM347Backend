@@ -1,11 +1,3 @@
-# Dockerfile für chat-service – Multi-Module Maven Build
-#
-# WICHTIG: Build-Context = Repo-Root, nicht der Service-Unterordner.
-#
-# Lokal testen (vom Repo-Root aus):
-#   docker build -f docker/chat-service.Dockerfile -t test-chat .
-
-# ── Stage 1: Build ─────────────────────────────────────────────────────────────
 FROM maven:3.9-eclipse-temurin-21 AS build
 
 WORKDIR /build
@@ -31,7 +23,6 @@ RUN mvn clean package -DskipTests -B -pl chat-service -am
 
 RUN rm -f chat-service/target/*-plain.jar
 
-# ── Stage 2: Runtime ───────────────────────────────────────────────────────────
 FROM eclipse-temurin:21-jre-alpine
 
 WORKDIR /app

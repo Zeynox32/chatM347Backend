@@ -1,15 +1,5 @@
 version: "3.9"
 
-# Chattrix – komplette Microservice-Architektur
-# Läuft auf einer einzigen Google Cloud VM
-#
-# Netzwerk:
-#   - chattrix-net: internes Netzwerk, alle Services kommunizieren darüber
-#   - Nur Caddy (80/443) ist von aussen erreichbar, alles andere intern
-#
-# Volumes:
-#   - Persistente Daten für MariaDB, MongoDB, Redis, RabbitMQ überleben Neustarts
-
 networks:
   chattrix-net:
     driver: bridge

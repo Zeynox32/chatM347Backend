@@ -1,11 +1,3 @@
-# Dockerfile für user-service – Multi-Module Maven Build
-#
-# WICHTIG: Build-Context = Repo-Root, nicht der Service-Unterordner.
-#
-# Lokal testen (vom Repo-Root aus):
-#   docker build -f docker/user-service.Dockerfile -t test-user .
-
-# ── Stage 1: Build ─────────────────────────────────────────────────────────────
 FROM maven:3.9-eclipse-temurin-21 AS build
 
 WORKDIR /build
@@ -29,10 +21,8 @@ COPY gateway-service/src gateway-service/src
 
 RUN mvn clean package -DskipTests -B -pl user-service -am
 
-# Spring Boot "*-plain.jar" entfernen, damit nur das ausführbare JAR übrig bleibt
 RUN rm -f user-service/target/*-plain.jar
 
-# ── Stage 2: Runtime ───────────────────────────────────────────────────────────
 FROM eclipse-temurin:21-jre-alpine
 
 WORKDIR /app
