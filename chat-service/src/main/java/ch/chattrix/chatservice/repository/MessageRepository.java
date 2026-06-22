@@ -8,4 +8,5 @@ import java.util.UUID;
 
 public interface MessageRepository extends MongoRepository<ChatMessage, String> {
     List<ChatMessage> findByChatUuid(UUID chatUuid);
+    void deleteByChatUuid(UUID chatUuid);
 }
