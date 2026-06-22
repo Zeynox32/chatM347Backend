@@ -51,6 +51,25 @@ services:
         limits:
           memory: 500m
 
+  mongo-init:
+    image: mongo:7
+    container_name: chattrix-mongo-init
+    restart: "no"
+    depends_on:
+      - mongodb
+    environment:
+      MONGODB_HOST: mongodb
+      MONGO_ROOT_USERNAME: ${MONGO_ROOT_USERNAME}
+      MONGO_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+      MONGO_APP_USER: ${MONGO_APP_USER}
+      MONGO_APP_PASSWORD: ${MONGO_APP_PASSWORD}
+      MONGO_APP_DB: ${MONGO_APP_DB}
+    volumes:
+      - ./mongodb/ensure-app-user.sh:/ensure-app-user.sh:ro
+    entrypoint: ["bash", "/ensure-app-user.sh"]
+    networks:
+      - chattrix-net
+
   redis:
     image: redis:7-alpine
     container_name: chattrix-redis
@@ -149,6 +168,9 @@ services:
       RABBITMQ_PORT: 5672
       RABBITMQ_USER: ${RABBITMQ_USER}
       RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
+    depends_on:
+      mongo-init:
+        condition: service_completed_successfully
     networks:
       - chattrix-net
     deploy:
