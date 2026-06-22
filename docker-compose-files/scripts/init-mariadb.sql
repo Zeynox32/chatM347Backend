@@ -1,5 +1,10 @@
--- Wird beim ersten Start des MariaDB-Containers automatisch ausgeführt
--- Erstellt die zwei benötigten Datenbanken für Authentication- und User-Service
+CREATE DATABASE IF NOT EXISTS authentication_service;
+CREATE DATABASE IF NOT EXISTS user_service;
 
-CREATE DATABASE IF NOT EXISTS authentication_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-CREATE DATABASE IF NOT EXISTS user_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER IF NOT EXISTS 'auth_user'@'%' IDENTIFIED BY 'auth_password';
+CREATE USER IF NOT EXISTS 'user_user'@'%' IDENTIFIED BY 'user_password';
+
+GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON authentication_service.* TO 'auth_user'@'%';
+GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON user_service.* TO 'user_user'@'%';
+
+FLUSH PRIVILEGES;
