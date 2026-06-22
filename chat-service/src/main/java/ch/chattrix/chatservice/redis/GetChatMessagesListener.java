@@ -3,6 +3,7 @@ package ch.chattrix.chatservice.redis;
 import ch.chattrix.chatservice.model.Chat;
 import ch.chattrix.chatservice.repository.ChatRepository;
 import ch.chattrix.chatservice.repository.MessageRepository;
+import ch.chattrix.chatservice.rabbitmq.UsernameClient;
 import ch.chattrix.shared.dto.ChatResponse;
 import ch.chattrix.shared.dto.MessageResponse;
 import ch.chattrix.shared.redis.channel.RedisChannels;
@@ -16,8 +17,10 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 @Component
 @RequiredArgsConstructor
@@ -27,10 +30,13 @@ public class GetChatMessagesListener implements MessageListener {
     private final StringRedisTemplate redisTemplate;
     private final ObjectMapper objectMapper;
     private final MessageRepository messageRepository;
+    private final UsernameClient usernameClient;
 
     @Override
     public void onMessage(Message redisMessage, byte[] pattern) {
+
         try {
+
             String body = new String(redisMessage.getBody());
 
             ChatMessagesGetEvent event =
@@ -52,14 +58,6 @@ public class GetChatMessagesListener implements MessageListener {
                 return;
             }
 
-            ChatResponse chatResponse = new ChatResponse();
-            chatResponse.setChatUuid(chat.getChatUuid());
-            chatResponse.setChatType(chat.getChatType());
-            chatResponse.setName(chat.getName());
-            chatResponse.setMemberUuids(chat.getMemberUuids());
-            chatResponse.setCreatorUuid(chat.getCreatorUuid());
-            chatResponse.setCreatedAt(chat.getCreatedAt());
-
             List<MessageResponse> messageResponses =
                     messageRepository.findByChatUuid(event.getChatUuid())
                             .stream()
@@ -73,6 +71,29 @@ public class GetChatMessagesListener implements MessageListener {
                                 return dto;
                             })
                             .toList();
+
+            List<UUID> senderUuids = messageResponses.stream()
+                    .map(MessageResponse::getSenderUuid)
+                    .distinct()
+                    .toList();
+
+            CompletableFuture<Map<UUID, String>> usernamesFuture =
+                    usernameClient.getUsernames(senderUuids);
+
+            Map<UUID, String> usernames =
+                    usernamesFuture.get();
+
+            messageResponses.forEach(msg ->
+                    msg.setUsername(usernames.get(msg.getSenderUuid()))
+            );
+
+            ChatResponse chatResponse = new ChatResponse();
+            chatResponse.setChatUuid(chat.getChatUuid());
+            chatResponse.setChatType(chat.getChatType());
+            chatResponse.setName(chat.getName());
+            chatResponse.setMemberUuids(chat.getMemberUuids());
+            chatResponse.setCreatorUuid(chat.getCreatorUuid());
+            chatResponse.setCreatedAt(chat.getCreatedAt());
 
             ChatMessagesReceivedEvent response =
                     ChatMessagesReceivedEvent.builder()
