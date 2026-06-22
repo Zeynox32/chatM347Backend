@@ -8,6 +8,7 @@ import ch.chattrix.shared.redis.event.ChatEditEvent;
 import ch.chattrix.shared.redis.event.ChatEditedEvent;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Component;
 import java.util.Optional;
 import java.util.UUID;
 
+@Profile("!test")
 @Component
 @RequiredArgsConstructor
 public class EditChatListener implements MessageListener {

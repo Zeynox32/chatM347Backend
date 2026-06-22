@@ -14,4 +14,5 @@ public class MessageResponse {
     private UUID senderUuid;
     private String content;
     private Date createdAt;
+    private String username;
 }

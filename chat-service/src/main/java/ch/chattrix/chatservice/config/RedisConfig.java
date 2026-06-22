@@ -4,11 +4,13 @@ import ch.chattrix.chatservice.redis.*;
 import ch.chattrix.shared.redis.channel.RedisChannels;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 
+@Profile("!test")
 @Configuration
 public class RedisConfig {
 

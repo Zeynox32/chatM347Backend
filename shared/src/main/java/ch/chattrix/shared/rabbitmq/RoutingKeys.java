@@ -9,6 +9,7 @@ public class RoutingKeys {
     public static final String AUTH_EDIT_CREDENTIAL = "auth.edit.credential";
     public static final String USER_REGISTER = "user.register";
     public static final String USER_GET_ALL = "user.get.all";
+    public static final String USER_GET_USERNAMES = "user.get.usernames";
     public static final String USER_EDIT_USERNAME = "user.edit.username";
     public static final String USER_GET_BASE_DATA = "user.get.base.data";
     public static final String AUTH_RESULT_REGISTER = "auth.result.register";
@@ -21,6 +22,7 @@ public class RoutingKeys {
     public static final String AUTH_RESULT_EDIT_CREDENTIAL = "auth.result.edit.credential";
     public static final String USER_RESULT_REGISTER = "user.result.register";
     public static final String USER_RESULT_GET_ALL = "user.result.get.all";
+    public static final String USER_RESULT_GET_USERNAMES = "user.result.get.usernames";
     public static final String USER_RESULT_EDIT_USERNAME = "user.result.edit.username";
     public static final String USER_RESULT_DELETE = "user.result.delete";
     public static final String AUTH_RESULT_DELETE = "auth.result.delete";

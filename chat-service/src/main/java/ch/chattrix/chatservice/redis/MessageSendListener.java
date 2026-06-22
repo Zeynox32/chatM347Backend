@@ -9,6 +9,7 @@ import ch.chattrix.shared.redis.event.MessageSendEvent;
 import ch.chattrix.shared.redis.event.MessageSentEvent;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -18,6 +19,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+@Profile("!test")
 @Component
 @RequiredArgsConstructor
 public class MessageSendListener implements MessageListener {

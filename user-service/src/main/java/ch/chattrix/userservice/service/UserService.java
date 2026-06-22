@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -124,6 +125,29 @@ public class UserService {
 
         } catch (Exception e) {
             return new ApiResponse<>(false, "USER_DELETE_FAILED", null);
+        }
+    }
+
+    @Transactional
+    public ApiResponse<Map<UUID, String>> getUsernames(List<UUID> userUuids) {
+
+        try {
+            if (userUuids == null || userUuids.isEmpty()) {
+                return new ApiResponse<>(true, "USERNAMES_EMPTY", java.util.Collections.emptyMap());
+            }
+
+            List<User> users = userRepository.findAllById(userUuids);
+
+            Map<UUID, String> result = users.stream()
+                    .collect(java.util.stream.Collectors.toMap(
+                            User::getUserUuid,
+                            User::getUsername
+                    ));
+
+            return new ApiResponse<>(true, "USERNAMES_GET_SUCCESS", result);
+
+        } catch (Exception e) {
+            return new ApiResponse<>(false, "USERNAMES_GET_FAILED", null);
         }
     }
 }

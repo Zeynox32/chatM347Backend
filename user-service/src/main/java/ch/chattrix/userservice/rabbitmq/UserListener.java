@@ -5,10 +5,12 @@ import ch.chattrix.shared.rabbitmq.Queues;
 import ch.chattrix.shared.rabbitmq.RoutingKeys;
 import ch.chattrix.shared.rabbitmq.command.UserEditUsernameCommand;
 import ch.chattrix.shared.rabbitmq.command.UserRegisterCommand;
+import ch.chattrix.shared.rabbitmq.command.UserUsernamesGetCommand;
 import ch.chattrix.shared.rabbitmq.command.UserUuidBasicCommand;
 import ch.chattrix.shared.rabbitmq.event.BasicRabbitMqResultEvent;
 import ch.chattrix.shared.rabbitmq.event.GetAllUsersResultEvent;
 import ch.chattrix.shared.rabbitmq.event.GetOneUserBasicDataResultEvent;
+import ch.chattrix.shared.rabbitmq.event.GetUsernamesResultEvent;
 import ch.chattrix.shared.response.ApiResponse;
 import ch.chattrix.shared.types.UserAnonymData;
 import ch.chattrix.shared.types.UserBaseData;
@@ -19,7 +21,9 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Component
@@ -259,6 +263,53 @@ public class UserListener {
             rabbitTemplate.convertAndSend(
                     Exchanges.USER_RESPONSE,
                     RoutingKeys.USER_RESULT_DELETE,
+                    event,
+                    msg -> {
+                        msg.getMessageProperties().setCorrelationId(correlationId);
+                        return msg;
+                    }
+            );
+        }
+    }
+
+    @RabbitListener(queues = Queues.USER_GET_USERNAMES_QUEUE)
+    public void handleGetUsernames(Message message) {
+
+        String correlationId = message.getMessageProperties().getCorrelationId();
+        if (correlationId == null) return;
+
+        try {
+            UserUsernamesGetCommand command =
+                    objectMapper.readValue(message.getBody(), UserUsernamesGetCommand.class);
+
+            ApiResponse<Map<UUID, String>> serviceResponse =
+                    userService.getUsernames(command.getUserUuids());
+
+            GetUsernamesResultEvent event = new GetUsernamesResultEvent();
+            event.setSuccess(serviceResponse.isSuccess());
+            event.setErrorMessage(serviceResponse.isSuccess() ? null : serviceResponse.getMessage());
+            event.setUsernames(serviceResponse.getData());
+
+            rabbitTemplate.convertAndSend(
+                    Exchanges.USER_RESPONSE,
+                    RoutingKeys.USER_RESULT_GET_USERNAMES,
+                    event,
+                    msg -> {
+                        msg.getMessageProperties().setCorrelationId(correlationId);
+                        return msg;
+                    }
+            );
+
+        } catch (Exception e) {
+
+            GetUsernamesResultEvent event = new GetUsernamesResultEvent();
+            event.setSuccess(false);
+            event.setErrorMessage(e.getMessage() != null ? e.getMessage() : "UNKNOWN_ERROR");
+            event.setUsernames(Collections.emptyMap());
+
+            rabbitTemplate.convertAndSend(
+                    Exchanges.USER_RESPONSE,
+                    RoutingKeys.USER_RESULT_GET_USERNAMES,
                     event,
                     msg -> {
                         msg.getMessageProperties().setCorrelationId(correlationId);

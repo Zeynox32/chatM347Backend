@@ -7,8 +7,6 @@ import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.stereotype.Component;
 
-import java.util.HashSet;
-
 @Component
 @RequiredArgsConstructor
 public class ChatCreatedListener implements MessageListener {

@@ -54,6 +54,11 @@ public class RabbitConfig {
     }
 
     @Bean
+    public Queue getUsernamesQueue() {
+        return new Queue(Queues.USER_GET_USERNAMES_QUEUE, true);
+    }
+
+    @Bean
     public Queue userRegisterResultQueue() {
         return new Queue(Queues.USER_REGISTER_RESULT_QUEUE, true);
     }
@@ -76,6 +81,11 @@ public class RabbitConfig {
     @Bean
     public Queue userDeleteResultQueue() {
         return new Queue(Queues.USER_DELETE_RESULT_QUEUE, true);
+    }
+
+    @Bean
+    public Queue getUsernamesResultQueue() {
+        return new Queue(Queues.USER_GET_USERNAMES_RESULT_QUEUE, true);
     }
 
     @Bean
@@ -119,6 +129,14 @@ public class RabbitConfig {
     }
 
     @Bean
+    public Binding getUsernamesBinding() {
+        return BindingBuilder
+                .bind(getUsernamesQueue())
+                .to(userExchange())
+                .with(RoutingKeys.USER_GET_USERNAMES);
+    }
+
+    @Bean
     public Binding userRegisterResultBinding() {
         return BindingBuilder
                 .bind(userRegisterResultQueue())
@@ -156,6 +174,14 @@ public class RabbitConfig {
                 .bind(userDeleteResultQueue())
                 .to(userResponseExchange())
                 .with(RoutingKeys.USER_RESULT_DELETE);
+    }
+
+    @Bean
+    public Binding getUsernamesResultBinding() {
+        return BindingBuilder
+                .bind(getUsernamesResultQueue())
+                .to(userResponseExchange())
+                .with(RoutingKeys.USER_RESULT_GET_USERNAMES);
     }
 
     @Bean
